@@ -12,7 +12,7 @@ public class FileUtils {
     public static final String separator = File.separator;
     public static final String STUDENTS_PHOTO_EXTENSION = ".jpg";
     private static final String TOMCAT_PATH = System.getProperty("catalina.base");
-    private static final String APP_FILES_DIR_NAME = "app_files";
+    private static final String APP_FILES_DIR_NAME = "../../../../../../merged_partition_content/Project/Dev/src/main/resources/tomcat/app_files";
     public static final String APP_FILES_PATH = buildPath(TOMCAT_PATH, APP_FILES_DIR_NAME);
     private static final String WEBAPPS_DIR_NAME = "webapps";
     public static final String WEBAPPS_FILES_PATH = buildPath(TOMCAT_PATH, WEBAPPS_DIR_NAME);

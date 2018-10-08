@@ -30,7 +30,8 @@ public class LessonBean implements Serializable {
 
     @ManagedProperty(value = "#{sessionBean}")
     private SessionBean sessionBean;
-
+    @ManagedProperty(value = "#{lessonsBean}")
+    private LessonsBean lessonsBean;
     private Lesson lesson;
     private boolean createMode;
     private boolean allPresent;

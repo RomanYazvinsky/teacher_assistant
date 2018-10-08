@@ -88,10 +88,11 @@
                                          update=":menuForm :lessonForm:lessonButtons"
                                          actionListener="#{menuBean.hideMenu}"
                                          rendered="#{menuBean.showMenu}"/>
-                        <p:commandButton title="#{msg['btn.show.menu']}" icon="fa fa-fw fa-align-justify"
+                        <p:commandButton title="#{msg['btn.show.menu']}" value="М"
                                          update=":menuForm :lessonForm:lessonButtons"
                                          actionListener="#{menuBean.showMenu}"
                                          rendered="#{not menuBean.showMenu}"/>
+                        <!--style="margin: 5px; line-height: 25px; border: 1px"-->
 
                         <p:commandButton id="modeBtn" icon="fa fa-fw fa-forward"/>
                         <p:overlayPanel for="modeBtn" hideEffect="fade" style="position: fixed;">
@@ -135,6 +136,12 @@
                                          update="@([id$=views])"
                                          styleClass="margin-top-10px font-size-14pt"
                                          rendered="${registrationModeBean.fastRegistration}">
+                        </p:commandButton>
+                        <p:commandButton title="#{msg['label.notes']}" update=":menuForm :lessonForm:lessonButtons"
+                                         icon="fa fa-fw fa-info-circle"
+                                         oncomplete="PF('lessonNotesDialog').show()"
+                                         actionListener="#{lessonModeBean.initNotes}">
+                            <f:setPropertyActionListener value="#{null}" target="#{lessonModeBean.newNote}"/>
                         </p:commandButton>
                     </p:panel>
                     <p:panelGrid columns="2" styleClass="lesson-text left">
@@ -216,10 +223,13 @@
                         actionListener="#{registrationModeBean.removeLessonStudent(pStudent)}"/>
                 </p:column>
 
-                <p:column sortBy="#{pStudent.name}"
-                          filterBy="#{pStudent.name}"
-                          filterMatchMode="startsWith"
-                          styleClass="bold w210px blue">
+                <p:column
+                    headerText="#{msg['label.table.present']}"
+                    sortBy="#{pStudent.name}"
+                    filterBy="#{pStudent.name}"
+                    filterMatchMode="startsWith"
+                    styleClass="bold w210px blue"
+                >
                     <h:outputText styleClass="bold #{pStudent.additional ? 'blue' : ''}" value="#{pStudent.name}"/>
                 </p:column>
 
@@ -494,6 +504,31 @@
                                  styleClass="block"/>
             </p:outputPanel>
         </p:dialog>
+        <p:dialog header="#{msg['label.notes']}"
+                  widgetVar="lessonNotesDialog"
+                  modal="true"
+                  showEffect="fade"
+                  hideEffect="fade"
+                  resizable="false">
+            <p:ajax event="close"/>
+            <p:outputPanel id="lessonNotes">
+                <ui:repeat var="note"
+                           value="#{lessonsBean.selectedLesson.notes}">
+                    <h:panelGrid columns="3" columnClasses="w300px, w20px">
+                        <h:outputText value="#{note.description}"/>
+                        <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                        <p:commandButton actionListener="#{lessonsBean.removeNote(note)}"
+                                         update=":lessonForm:notes"
+                                         icon="fa fa-fw fa-minus" title="#{msg['option.remove']}"
+                                         styleClass="red"/>
+                    </h:panelGrid>
+                </ui:repeat>
+                <p:inputTextarea value="#{lessonsBean.newNote}"/>
 
+                <p:commandButton value="#{msg['btn.save.exit']}" icon="fa fa-fw fa-save"
+                                 actionListener="#{lessonsBean.saveNote}"
+                                 styleClass="block"/>
+            </p:outputPanel>
+        </p:dialog>
     </h:form>
 </ui:composition>
