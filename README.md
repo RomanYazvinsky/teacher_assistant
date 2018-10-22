@@ -11,7 +11,7 @@ This application is an electronic journal that helps university teachers with th
  - Apache Tomcat V8.x
 
 ## Development
-
+WARNING: Some paths could be not actual, such as TOMCAT_DIR in pom.xml and APP_FILES_DIR_NAME in FileUtils
 1. Copy **app_files** folder (/src/main/resources/tomcat/app_files) into **TOMCAT_HOME** folder.
 
     This folder should contain next:
