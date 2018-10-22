@@ -132,7 +132,7 @@ public class LessonsBean implements Serializable {
     }
 
     public void openRegistrationMode() {
-        registrationModeBean.initLesson(selectedLesson);
+        registrationModeBean.initLesson(selectedLesson, lessons);
         menuBean.changeView("registrationMode");
         menuBean.hideMenu();
     }

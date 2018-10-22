@@ -105,7 +105,7 @@
                      styleClass="lessons"
                      rowStyleClass="h40px #{(lesson.type eq 'PRACTICAL') ? 'blue' : (lesson.type eq 'LAB' ? 'red' : '')} #{utility.afterNow(lesson.date, lesson.schedule.end) ? 'bold' : ''}">
 
-            <p:ajax event="rowSelect"
+            <p:ajax event="rowDblselect"
                     listener="#{lessonsBean.openRegistrationMode}"
                     update="@([id$=wrapper])"/>
 
@@ -211,6 +211,12 @@
                         styleClass="red"
                         actionListener="#{lessonsBean.removeLesson(lessonsBean.selectedLesson)}">
                 <p:confirm header="#{msg['warning']}" message="#{msg['warning.sure.delete']}" icon="ui-icon-alert"/>
+            </p:menuitem>
+            <p:menuitem value="#{msg['option.note']}"
+                        update=":lessonsForm:notes"
+                        icon="fa fa-fw fa-info-circle"
+                        oncomplete="PF('lessonNotesDialog').show()">
+                <f:setPropertyActionListener value="#{null}" target="#{lessonsBean.newNote}"/>
             </p:menuitem>
             <p:menuitem value="#{msg['option.note']}"
                         update=":lessonsForm:notes"

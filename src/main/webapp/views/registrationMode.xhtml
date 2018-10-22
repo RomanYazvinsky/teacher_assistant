@@ -84,7 +84,7 @@
                             <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
                         </p:commandButton>
 
-                        <p:commandButton title="#{msg['btn.hide.menu']}" icon="fa fa-fw fa-align-center"
+                        <p:commandButton title="#{msg['btn.hide.menu']}" value="М"
                                          update=":menuForm :lessonForm:lessonButtons"
                                          actionListener="#{menuBean.hideMenu}"
                                          rendered="#{menuBean.showMenu}"/>
@@ -92,7 +92,6 @@
                                          update=":menuForm :lessonForm:lessonButtons"
                                          actionListener="#{menuBean.showMenu}"
                                          rendered="#{not menuBean.showMenu}"/>
-                        <!--style="margin: 5px; line-height: 25px; border: 1px"-->
 
                         <p:commandButton id="modeBtn" icon="fa fa-fw fa-forward"/>
                         <p:overlayPanel for="modeBtn" hideEffect="fade" style="position: fixed;">
@@ -137,12 +136,19 @@
                                          styleClass="margin-top-10px font-size-14pt"
                                          rendered="${registrationModeBean.fastRegistration}">
                         </p:commandButton>
-                        <p:commandButton title="#{msg['label.notes']}" update=":menuForm :lessonForm:lessonButtons"
+                        <p:commandButton title="#{msg['label.notes']}" update=":menuForm :lessonForm:lessonButtons :lessonForm:lessonNotes"
                                          icon="fa fa-fw fa-info-circle"
-                                         oncomplete="PF('lessonNotesDialog').show()"
-                                         actionListener="#{lessonModeBean.initNotes}">
+                                         oncomplete="PF('lessonNotesDialog').show()">
                             <f:setPropertyActionListener value="#{null}" target="#{lessonModeBean.newNote}"/>
                         </p:commandButton>
+                        <p:commandButton title="#{msg['btn.show.next.lesson']}"
+                                         icon="fa fa-fw fa-toggle-right"
+                                         update=":lessonForm"
+                                         actionListener="#{registrationModeBean.initLesson(
+                                            registrationModeBean.getNextLesson(),
+                                            registrationModeBean.orderedLessons
+                                          )}"
+                                         rendered="#{registrationModeBean.nextLessonAvailable}"/>
                     </p:panel>
                     <p:panelGrid columns="2" styleClass="lesson-text left">
                         <p:panelGrid columns="2" id="attendanceInfo" styleClass="bold">
@@ -297,10 +303,12 @@
                         actionListener="#{registrationModeBean.addLessonStudent(aStudent)}"/>
                 </p:column>
 
-                <p:column sortBy="#{aStudent.name}"
-                          filterBy="#{aStudent.name}"
-                          filterMatchMode="startsWith"
-                          styleClass="bold w210px">
+                <p:column
+                    headerText="#{msg['label.table.absent']}"
+                    sortBy="#{aStudent.name}"
+                    filterBy="#{aStudent.name}"
+                    filterMatchMode="startsWith"
+                    styleClass="bold w210px">
                     <h:outputText styleClass="bold" value="#{aStudent.name}"/>
                 </p:column>
 
@@ -411,6 +419,12 @@
                         actionListener="#{registrationModeBean.setSelectedStudent(registrationModeBean.selectedPresentStudents.get(0))}">
                 <f:setPropertyActionListener value="#{null}" target="#{registrationModeBean.newNote}"/>
             </p:menuitem>
+            <p:menuitem value="#{msg['label.marks']}"
+                        update=":lessonForm:studentMarksDialogId :lessonForm:studentMarks :lessonForm:studentMarksTable"
+                        icon="fa fa-fw fa-info-circle"
+                        oncomplete="PF('studentMarksDialog').show()"
+                        actionListener="#{registrationModeBean.setSelectedStudent(registrationModeBean.selectedPresentStudents.get(0))}">
+            </p:menuitem>
         </p:contextMenu>
 
         <p:contextMenu for="absentStudents">
@@ -513,21 +527,104 @@
             <p:ajax event="close"/>
             <p:outputPanel id="lessonNotes">
                 <ui:repeat var="note"
-                           value="#{lessonsBean.selectedLesson.notes}">
+                           value="#{registrationModeBean.selectedLesson.notes}">
                     <h:panelGrid columns="3" columnClasses="w300px, w20px">
                         <h:outputText value="#{note.description}"/>
                         <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
-                        <p:commandButton actionListener="#{lessonsBean.removeNote(note)}"
-                                         update=":lessonForm:notes"
+                        <p:commandButton actionListener="#{registrationModeBean.removeLessonNote(note)}"
+                                         update=":lessonForm:lessonNotes"
                                          icon="fa fa-fw fa-minus" title="#{msg['option.remove']}"
                                          styleClass="red"/>
                     </h:panelGrid>
                 </ui:repeat>
-                <p:inputTextarea value="#{lessonsBean.newNote}"/>
+                <p:inputTextarea value="#{registrationModeBean.newLessonNote}"/>
 
                 <p:commandButton value="#{msg['btn.save.exit']}" icon="fa fa-fw fa-save"
-                                 actionListener="#{lessonsBean.saveNote}"
+                                 actionListener="#{registrationModeBean.saveLessonNote}"
                                  styleClass="block"/>
+            </p:outputPanel>
+        </p:dialog>
+        <p:dialog header="#{registrationModeBean.selectedStudent.student.fullName}"
+                  widgetVar="studentMarksDialog"
+                  modal="true"
+                  showEffect="fade"
+                  hideEffect="fade"
+                  resizable="false"
+                  id="studentMarksDialogId">
+            <p:ajax event="close" listener="#{registrationModeBean.clearStudentLessonInfoDialog}"/>
+            <p:outputPanel id="studentMarks">
+                <p:dataTable id="studentMarksTable"
+                             var="student"
+                             value="#{registrationModeBean.selectedStudentLazyModel}"
+                             editable="true"
+                             editMode="cell"
+                             sortBy="#{student.name}"
+
+                             rowKey="#{student.id}"
+                             paginator="false"
+                             lazy="true"
+                             selectionMode="single"
+                             rows="1"
+                             styleClass="lesson-mode-table"
+                >
+                    <p:ajax event="cellEdit" listener="#{registrationModeBean.onCellEdit}"/>
+                    <p:columns value="#{registrationModeBean.lessons}"
+                               var="lesson"
+                               styleClass="lesson class-info
+                                #{registrationModeBean.selectedStudent.student.studentLessons[lesson.id] eq null
+                                 ? 'no-class' : (registrationModeBean.selectedStudent.student.studentLessons[lesson.id].registered eq false ? 'skip' : '')}"
+                    >
+                        <f:facet name="header">
+                            <h:panelGroup id="studentMarkInfo" styleClass="lesson-info">
+                                <p:outputLabel value="#{lesson.date}"
+                                               styleClass="font-size-12pt #{lesson.id eq registrationModeBean.selectedLesson.id ? 'dark-red' : ''}"/>
+                                <p:outputLabel
+                                    styleClass="block uppercase font-size-10pt #{lesson.type eq 'PRACTICAL' ? 'blue' : ''}
+                                     #{lesson.id eq registrationModeBean.selectedLesson.id ? 'dark-red' : ''}"
+                                    value="#{msg['label.'.concat(lesson.type.key)]}"/>
+                                <p:outputLabel
+                                    styleClass="inline-block v-align-top #{lesson.id eq registrationModeBean.selectedLesson.id ? 'dark-red' : ''}">
+                                    <h:outputText styleClass="font-size-9pt block"
+                                                  value="#{utility.getLessonCount(lesson.lesson)}"/>
+                                </p:outputLabel>
+                                <p:outputLabel id="noteLesson" styleClass="notes-info"
+                                               rendered="#{lesson.lesson.notes.size() gt 0}">
+                                    <i class="fa fa-info-circle"></i>
+                                </p:outputLabel>
+                                <p:tooltip for="noteLesson" position="bottom"
+                                           rendered="#{lesson.lesson.notes.size() gt 0}">
+                                    <ui:repeat var="note" value="#{lesson.lesson.notes}">
+                                        <h:panelGrid columns="2" columnClasses="w300px, w20px" styleClass="w100pc">
+                                            <h:outputText value="#{note.description}"/>
+                                            <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                                        </h:panelGrid>
+                                    </ui:repeat>
+                                </p:tooltip>
+                            </h:panelGroup>
+
+                        </f:facet>
+
+                        <p:cellEditor
+                            rendered="#{registrationModeBean.selectedStudent.student.studentLessons[lesson.id] ne null}">
+                            <f:facet name="output">
+                                <h:outputText
+                                    value="#{registrationModeBean.selectedStudent.student.studentLessons[lesson.id].mark}"/>
+                                <p:outputLabel id="noteStudentLesson" styleClass="float-right"
+                                               rendered="#{registrationModeBean.selectedStudent.student.studentLessons[lesson.id].notes.size() gt 0}">
+                                    <i class="fa fa-info-circle"/>
+                                </p:outputLabel>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="modelInput"
+                                             value="#{registrationModeBean.selectedStudent.student.studentLessons[lesson.id].mark}"/>
+                            </f:facet>
+                        </p:cellEditor>
+
+
+                    </p:columns>
+
+                </p:dataTable>
+
             </p:outputPanel>
         </p:dialog>
     </h:form>

@@ -213,7 +213,7 @@ public class LessonModeBean implements Serializable {
         } else {
 
         }
-    }
+}
 
     public void changeAttestationMark(ValueChangeEvent event) {
         int attestationId = Integer.parseInt(String.valueOf(event.getComponent().getAttributes().get("attestationId")));

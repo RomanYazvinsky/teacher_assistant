@@ -364,6 +364,10 @@ body {
 	text-transform: uppercase;
 }
 
+.ui-panel-titlebar .ui-panel-title {
+    margin-right: 0 !important;
+}
+
 .image img {
 	max-width: 185px;
 	height: auto;

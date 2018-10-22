@@ -13,7 +13,11 @@ import com.grsu.teacherassistant.serial.SerialStatus;
 import com.grsu.teacherassistant.utils.EntityUtils;
 import com.grsu.teacherassistant.utils.FacesUtils;
 import com.grsu.teacherassistant.utils.LocaleUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
+import org.primefaces.component.api.DynamicColumn;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleSelectEvent;
 import org.slf4j.Logger;
@@ -62,6 +66,8 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     @ManagedProperty(value = "#{notificationSettingsBean}")
     private NotificationSettingsBean notificationSettingsBean;
 
+    private Lesson initialData;
+    private List<Lesson> orderedLessons;
     private Lesson selectedLesson;
     private Student processedStudent;
 
@@ -80,10 +86,11 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
 
     private LazyStudentDataModel presentStudentsLazyModel;
     private LazyStudentDataModel absentStudentsLazyModel;
+    private LazyStudentDataModel selectedStudentLazyModel;
 
     private List<LessonStudentModel> selectedPresentStudents;
     private List<LessonStudentModel> selectedAbsentStudents;
-
+    private List<LessonStudentModel> students;
 
     private boolean selectedAllPresentStudents;
     private boolean selectedAllAbsentStudents;
@@ -98,8 +105,20 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     private boolean fastRegistration;
     private Lesson lastLesson;
     private boolean studentNotExist;
+    private Stream stream;
+    private List<LessonModel> lessons;
+    private List<LessonModel> attestations;
+    private List<LessonModel> exams;
+    private String newNotification;
+    @Setter(AccessLevel.NONE)
+    private LessonStudentModel selectedStudent;
+    private String newNote;
+    private String newLessonNote;
+    private boolean nextLessonAvailable = false;
 
-    public void initLesson(Lesson lesson) {
+    public void initLesson(Lesson lesson, List<Lesson> otherLessons) {
+        this.orderedLessons = otherLessons;
+        initialData = lesson;
         processedStudent = null;
         notes = null;
         alarmBean.setAlarms();
@@ -107,6 +126,7 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         serialBean.startRecord();
 
         if (lesson != null) {
+            clear();
             this.selectedLesson = EntityDAO.get(Lesson.class, lesson.getId());
             calculateTimer();
             initStudents();
@@ -127,6 +147,7 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
             }
 
             initLastLesson();
+            isNextLessonAvailable();
         }
     }
 
@@ -161,7 +182,18 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         });
         EntityDAO.update(new ArrayList<>(selectedLesson.getStudentLessons().values()));
         fastRegistration = false;
-        initLesson(selectedLesson);
+        initLesson(selectedLesson, orderedLessons);
+    }
+
+    public Lesson getNextLesson() {
+        if (!isNextLessonAvailable()) {
+            return null;
+        }
+        return orderedLessons.get(orderedLessons.indexOf(initialData) + 1);
+    }
+
+    public boolean isNextLessonAvailable() {
+        return orderedLessons.size() > orderedLessons.indexOf(initialData) + 1;
     }
 
     public void returnToLessons() {
@@ -415,6 +447,8 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         FacesUtils.execute("PF('pStudentsTable').clearFilters()");
     }
 
+    /* LESSON STUDENTS TABLES */
+
     public void addAbsentStudents() {
         if (selectedAbsentStudents != null && selectedAbsentStudents.size() > 0) {
             List<Student> selectedStudents = null;
@@ -524,8 +558,6 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         LOGGER.info("<== updateSkipInfo(); " + (System.currentTimeMillis() - t));
     }
 
-	/* LESSON STUDENTS TABLES */
-
     private void generateLessonStudents(List<LessonStudentModel> lessonStudentModelList, List<Student> students) {
         lessonStudentModelList.clear();
         for (Student st : students) {
@@ -565,7 +597,6 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
 //
         }
     }
-
 
     public String getStudentSkip(Student student) {
         LocaleUtils localeUtils = new LocaleUtils(localeBean.getLocale());
@@ -623,7 +654,6 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         }
     }
 
-
     public void exitStudents() {
         setFilteredAllStudents(null);
         update("views");
@@ -675,8 +705,82 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         FacesUtils.push("/notify", createStudentDesktopNotification());
     }
 
-    private String newNotification;
-    private LessonStudentModel selectedStudent;
+    public void setSelectedStudent(LessonStudentModel model) {
+        if (model == null) {
+            return;
+        }
+        selectedStudent = model;
+        stream = this.selectedLesson.getStream();
+
+        List<Lesson> lessons = new ArrayList<>();
+        Set<Student> studentSet = new HashSet<>();
+        if (stream != null && selectedLesson != null) {
+            if (selectedLesson.getGroup() != null) {
+                studentSet.addAll(selectedLesson.getGroup().getStudents());
+                lessons = stream.getLessons().stream().filter(l -> l.getGroup() == null || (selectedLesson.getGroup().equals(l.getGroup()))).collect(Collectors.toList());
+            } else {
+                stream.getGroups().stream().forEach(g -> studentSet.addAll(g.getStudents()));
+                lessons = stream.getLessons();
+            }
+        }
+
+        //int lessons
+        this.lessons = lessons.stream()
+            .filter(l -> Arrays.asList(LessonType.LECTURE, LessonType.PRACTICAL, LessonType.LAB).contains(l.getType()))
+            .sorted((l1, l2) -> {
+                if (l1.getDate().isAfter(l2.getDate())) return -1;
+                if (l1.getDate().isBefore(l2.getDate())) return 1;
+                return 0;
+            })
+            .map(LessonModel::new).collect(Collectors.toList());
+        //init attestations
+        this.attestations = lessons.stream()
+            .filter(l -> LessonType.ATTESTATION.equals(l.getType()))
+            .map(LessonModel::new).collect(Collectors.toList());
+        attestations.forEach(a -> a.setNumber(attestations.indexOf(a) + 1));
+
+        //init exams
+        this.exams = lessons.stream()
+            .filter(l -> LessonType.EXAM.equals(l.getType()))
+            .map(LessonModel::new).collect(Collectors.toList());
+
+        //init additional students
+        List<LessonStudentModel> additionalStudents = StudentDAO.getAdditionalStudents(selectedLesson.getId()).stream()
+            .map(s -> new LessonStudentModel(s, stream, true)).collect(Collectors.toList());
+
+        students = studentSet.stream().map(s -> new LessonStudentModel(s, stream)).collect(Collectors.toList());
+        students.addAll(additionalStudents);
+        students = students.stream().sorted(Comparator.comparing(LessonStudentModel::getName)).collect(Collectors.toList());
+
+        Map<Integer, Map<String, Integer>> skipInfo = StudentDAO.getSkipInfo(stream.getId(), selectedLesson.getId());
+        students.stream().forEach(s -> {
+            if (skipInfo.containsKey(s.getId())) {
+                s.setTotalSkip(skipInfo.get(s.getId()).get(Constants.TOTAL_SKIP));
+            }
+        });
+
+        selectedStudentLazyModel = new LazyStudentDataModel(students);
+    }
+
+    public void onCellEdit(CellEditEvent event) throws Exception {
+        if (!event.getColumn().getColumnKey().contains("attestation")) {
+            Integer id = lessons.get(((DynamicColumn) event.getColumn()).getIndex()).getId();
+            EntityDAO.update(selectedStudent.getStudent().getStudentLessons().get(id));
+        } else {
+
+        }
+    }
+
+    public void clearStudentLessonInfoDialog() {
+        lessons = null;
+        attestations = null;
+        exams = null;
+
+        students = null;
+        selectedStudent = null;
+
+        selectedStudentLazyModel = null;
+    }
 
     public void removeNotification(StudentNotification notification) {
         EntityDAO.delete(notification);
@@ -735,8 +839,6 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         }
     }
 
-    private String newNote;
-
     public void removeNote(Note note) {
         EntityDAO.delete(note);
         selectedStudent.getStudent().getStudentLessons().get(selectedLesson.getId()).getNotes().remove(note);
@@ -756,4 +858,26 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         newNote = null;
         FacesUtils.closeDialog("studentNotesDialog");
     }
+
+
+    public void removeLessonNote(Note note) {
+        EntityDAO.delete(note);
+        selectedLesson.getNotes().remove(note);
+    }
+
+
+    public void saveLessonNote() {
+        if (newLessonNote != null && !newLessonNote.isEmpty()) {
+            Note note = new Note();
+            note.setCreateDate(LocalDateTime.now());
+            note.setDescription(newLessonNote);
+            note.setType(Constants.LESSON);
+            note.setEntityId(selectedLesson.getId());
+            selectedLesson.getNotes().add(note);
+            EntityDAO.save(note);
+        }
+        newLessonNote = null;
+        FacesUtils.closeDialog("lessonNotesDialog");
+    }
+
 }
