@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 
 import static com.grsu.teacherassistant.utils.FacesUtils.closeDialog;
 import static com.grsu.teacherassistant.utils.FacesUtils.update;
+import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
 import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_PROPERTY_NAME;
 import static com.grsu.teacherassistant.utils.PropertyUtils.setProperty;
 
@@ -22,9 +23,11 @@ public class BackupBean {
     private static final String BACKUP_DIALOG = "backupDialog";
 
     private Boolean autoBackup;
+    private Boolean autoBackupOnNewMode;
 
     public void init() {
         autoBackup = ApplicationUtils.isAutoBackupEnabled();
+        autoBackupOnNewMode = ApplicationUtils.isAutoBackupOnNewModeEnabled();
 
         FacesUtils.showDialog(BACKUP_DIALOG);
     }
@@ -35,6 +38,7 @@ public class BackupBean {
 
     public void save() {
         setProperty(AUTO_BACKUP_PROPERTY_NAME, autoBackup.toString());
+        setProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME, autoBackupOnNewMode.toString());
         update("views");
         exit();
     }

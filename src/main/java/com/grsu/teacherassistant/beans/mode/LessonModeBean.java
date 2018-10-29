@@ -8,6 +8,7 @@ import com.grsu.teacherassistant.entities.*;
 import com.grsu.teacherassistant.entities.StudentLesson;
 import com.grsu.teacherassistant.models.*;
 import com.grsu.teacherassistant.utils.FacesUtils;
+import com.grsu.teacherassistant.utils.FileUtils;
 import lombok.Data;
 import org.primefaces.component.api.DynamicColumn;
 import org.primefaces.event.CellEditEvent;
@@ -29,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
+import static com.grsu.teacherassistant.utils.PropertyUtils.getProperty;
 
 /**
  * @author Pavel Zaychick
@@ -101,6 +105,9 @@ public class LessonModeBean implements Serializable {
     }
 
     private void initLessonStudents() {
+        if (Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME))) {
+            FileUtils.backupDatabase("OPEN_LESSON_MODE");
+        }
         currentLesson = new LessonModel(lesson, true);
 
         List<Lesson> lessons = new ArrayList<>();

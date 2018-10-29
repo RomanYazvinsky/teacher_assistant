@@ -30,4 +30,8 @@ public class ApplicationUtils {
     public static boolean isAutoBackupEnabled() {
        return Boolean.valueOf(getProperty(AUTO_BACKUP_PROPERTY_NAME));
     }
+
+    public static boolean isAutoBackupOnNewModeEnabled() {
+       return Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME));
+    }
 }

@@ -3,20 +3,17 @@ package com.grsu.teacherassistant.entities;
 import com.grsu.teacherassistant.converters.db.LessonTypeAttributeConverter;
 import com.grsu.teacherassistant.converters.db.LocalDateTimeAttributeConverter;
 import com.grsu.teacherassistant.models.LessonType;
-import com.grsu.teacherassistant.utils.EntityUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Where;
 
 import javax.faces.bean.ManagedBean;
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Pavel Zaychick
@@ -38,6 +35,10 @@ public class Lesson implements AssistantEntity {
     @Basic
     @Column(name = "description")
     private String description;
+
+    @Basic
+    @Column(name = "checked")
+    private Boolean checked;
 
     @Basic
     @Convert(converter = LocalDateTimeAttributeConverter.class)

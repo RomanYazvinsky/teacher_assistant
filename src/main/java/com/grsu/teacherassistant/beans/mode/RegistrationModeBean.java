@@ -12,6 +12,7 @@ import com.grsu.teacherassistant.push.resources.PushMessage;
 import com.grsu.teacherassistant.serial.SerialStatus;
 import com.grsu.teacherassistant.utils.EntityUtils;
 import com.grsu.teacherassistant.utils.FacesUtils;
+import com.grsu.teacherassistant.utils.FileUtils;
 import com.grsu.teacherassistant.utils.LocaleUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 
 import static com.grsu.teacherassistant.utils.FacesUtils.closeDialog;
 import static com.grsu.teacherassistant.utils.FacesUtils.update;
+import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
+import static com.grsu.teacherassistant.utils.PropertyUtils.getProperty;
 
 @ManagedBean(name = "registrationModeBean")
 @ViewScoped
@@ -117,6 +120,7 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     private boolean nextLessonAvailable = false;
 
     public void initLesson(Lesson lesson, List<Lesson> otherLessons) {
+        runBackup("OPEN_REGISTRATION_MODE");
         this.orderedLessons = otherLessons;
         initialData = lesson;
         processedStudent = null;
@@ -193,7 +197,7 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     }
 
     public boolean isNextLessonAvailable() {
-        return orderedLessons.size() > orderedLessons.indexOf(initialData) + 1;
+        return orderedLessons != null && orderedLessons.size() > orderedLessons.indexOf(initialData) + 1;
     }
 
     public void returnToLessons() {
@@ -278,6 +282,12 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         if (lessonStudents != null && presentStudents != null) {
             additionalStudents = new ArrayList<>(this.presentStudents);
             additionalStudents.removeAll(this.lessonStudents);
+        }
+    }
+
+    public void runBackup(String reason) {
+        if (Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME))) {
+            FileUtils.backupDatabase(reason);
         }
     }
 

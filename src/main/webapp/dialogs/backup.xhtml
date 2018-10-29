@@ -23,6 +23,10 @@
                                value="#{msg['settings.autobackup.enable']}"/>
                 <p:selectBooleanCheckbox id="autoBackupEnable"
                                value="#{backupBean.autoBackup}"/>
+                <h:outputLabel for="backupForm"
+                               value="#{msg['settings.autobackup.newmode']}"/>
+                <p:selectBooleanCheckbox id="autoBackupOnNewNoteEnable"
+                               value="#{backupBean.autoBackupOnNewMode}"/>
             </h:panelGrid>
 
             <p:commandButton value="#{msg['btn.save.exit']}"

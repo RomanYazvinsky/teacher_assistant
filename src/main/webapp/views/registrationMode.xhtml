@@ -136,10 +136,16 @@
                                          styleClass="margin-top-10px font-size-14pt"
                                          rendered="${registrationModeBean.fastRegistration}">
                         </p:commandButton>
-                        <p:commandButton title="#{msg['label.notes']}" update=":menuForm :lessonForm:lessonButtons :lessonForm:lessonNotes"
+                        <p:commandButton title="#{msg['label.notes']}"
+                                         update=":menuForm :lessonForm:lessonButtons :lessonForm:lessonNotes"
                                          icon="fa fa-fw fa-info-circle"
                                          oncomplete="PF('lessonNotesDialog').show()">
                             <f:setPropertyActionListener value="#{null}" target="#{lessonModeBean.newNote}"/>
+                        </p:commandButton>
+                        <p:commandButton title="#{msg['label.backup']}"
+                                         update=":menuForm :lessonForm:lessonButtons :lessonForm:lessonNotes"
+                                         icon="fa fa-fw fa-save"
+                                         actionListener="#{registrationModeBean.runBackup('REGISTRATION_MANUAL')}">
                         </p:commandButton>
                         <p:commandButton title="#{msg['btn.show.next.lesson']}"
                                          icon="fa fa-fw fa-toggle-right"

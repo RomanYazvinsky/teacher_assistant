@@ -15,6 +15,7 @@ import com.grsu.teacherassistant.push.resources.PushMessage;
 import com.grsu.teacherassistant.serial.SerialStatus;
 import com.grsu.teacherassistant.utils.EntityUtils;
 import com.grsu.teacherassistant.utils.FacesUtils;
+import com.grsu.teacherassistant.utils.FileUtils;
 import lombok.Data;
 import org.primefaces.component.inputtext.InputText;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
+import static com.grsu.teacherassistant.utils.PropertyUtils.getProperty;
 
 /**
  * @author Pavel Zaychick
@@ -61,6 +65,9 @@ public class StudentModeBean implements Serializable, SerialListenerBean {
     private String studentsType = "ALL";
 
     public void initStudentMode(Student student, Stream stream) {
+        if (Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME))) {
+            FileUtils.backupDatabase("OPEN_STUDENT_MODE");
+        }
         serialBean.setCurrentListener(this);
         clear();
         this.student = student;

@@ -30,15 +30,14 @@ import java.util.stream.Collectors;
 @ManagedBean(name = "lessonsBean")
 @ViewScoped
 public class LessonsBean implements Serializable {
+    private final List<LessonType> lessonTypes =
+        new ArrayList<>(Arrays.asList(LessonType.LECTURE, LessonType.PRACTICAL, LessonType.LAB, LessonType.EXAM));
     @ManagedProperty(value = "#{menuBean}")
     private MenuBean menuBean;
-
     @ManagedProperty(value = "#{registrationModeBean}")
     private RegistrationModeBean registrationModeBean;
-
     private List<Lesson> lessons;
     private Lesson selectedLesson;
-
     private LocalDateTime dateFrom;
     private LocalDateTime dateTo;
     private boolean closed;
@@ -49,12 +48,8 @@ public class LessonsBean implements Serializable {
     private Integer groupId;
     private Integer month;
     private LessonType type;
-
     private String newNote;
-
     private Map<Integer, String> streamNames;
-    private final List<LessonType> lessonTypes =
-        new ArrayList<>(Arrays.asList(LessonType.LECTURE, LessonType.PRACTICAL, LessonType.LAB, LessonType.EXAM));
 
     @PostConstruct
     private void init() {
@@ -65,6 +60,11 @@ public class LessonsBean implements Serializable {
     public void removeLesson(Lesson lesson) {
         EntityDAO.delete(lesson);
         lessons.remove(lesson);
+    }
+
+    public void toggleChecked() {
+        selectedLesson.setChecked(!selectedLesson.getChecked());
+        EntityDAO.update(selectedLesson);
     }
 
     public List<Lesson> getLessons() {

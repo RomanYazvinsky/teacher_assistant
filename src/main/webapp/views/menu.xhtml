@@ -125,7 +125,7 @@
                 <p:menuitem value="#{msg['option.registrationMode']}"
                             update="@([id$=wrapper])"
                             icon="fa fa-fw fa-rss"
-                            actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson())}"
+                            actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons())}"
                             disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'registrationMode')}">
                     <f:setPropertyActionListener value="registrationMode" target="#{sessionBean.activeView}"/>
                     <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
@@ -189,7 +189,7 @@
             <p:menuitem value="#{msg['option.registrationMode']}"
                         update="@([id$=wrapper])"
                         icon="fa fa-fw fa-rss"
-                        actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson())}"
+                        actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons())}"
                         disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'registrationMode')}">
                 <f:setPropertyActionListener value="registrationMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>

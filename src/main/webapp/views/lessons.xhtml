@@ -108,11 +108,6 @@
             <p:ajax event="rowDblselect"
                     listener="#{lessonsBean.openRegistrationMode}"
                     update="@([id$=wrapper])"/>
-
-            <!--<p:ajax event="rowDblselect"-->
-            <!--listener="#{lessonBean.initLesson(lessonsBean.selectedLesson)}"-->
-            <!--update=":lessonInfoForm"/>-->
-
             <p:column headerText="#{msg['lessons.stream']}"
                       sortBy="#{lesson.stream.name}"
             >
@@ -142,7 +137,8 @@
             >
                 <h:outputText value="#{msg[lesson.type.key]}"/>
                 <h:outputText value=" #{utility.getLessonCount(lesson)}" rendered="#{lesson.type ne 'EXAM'}"/>
-
+                <h:outputText styleClass="float-right fa fa-check" style="color: #388E3C;"
+                              rendered="#{lesson.checked}"/>
                 <h:outputText id="note" styleClass="float-right fa fa-info-circle"
                               rendered="#{lesson.notes.size() gt 0 or not lesson.description.isEmpty()}"/>
                 <p:tooltip for="note" position="bottom"
@@ -200,6 +196,12 @@
                 <f:setPropertyActionListener value="studentMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{lessonsBean.selectedLesson}" target="#{lessonModeBean.lesson}"/>
             </p:menuitem>
+            <p:menuitem update=":lessonsForm"
+                        rendered="#{!lessonsBean.selectedLesson.checked}" value="#{msg['option.check']}"
+                        icon="fa fa-fw fa-check" actionListener="#{lessonsBean.toggleChecked()}"/>
+            <p:menuitem update=":lessonsForm"
+                        rendered="#{lessonsBean.selectedLesson.checked}" value="#{msg['option.uncheck']}"
+                        icon="fa fa-fw fa-ban" actionListener="#{lessonsBean.toggleChecked()}"/>
             <p:separator/>
             <p:menuitem value="#{msg['option.edit']}"
                         update=":lessonInfoForm"
@@ -211,12 +213,6 @@
                         styleClass="red"
                         actionListener="#{lessonsBean.removeLesson(lessonsBean.selectedLesson)}">
                 <p:confirm header="#{msg['warning']}" message="#{msg['warning.sure.delete']}" icon="ui-icon-alert"/>
-            </p:menuitem>
-            <p:menuitem value="#{msg['option.note']}"
-                        update=":lessonsForm:notes"
-                        icon="fa fa-fw fa-info-circle"
-                        oncomplete="PF('lessonNotesDialog').show()">
-                <f:setPropertyActionListener value="#{null}" target="#{lessonsBean.newNote}"/>
             </p:menuitem>
             <p:menuitem value="#{msg['option.note']}"
                         update=":lessonsForm:notes"

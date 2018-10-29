@@ -9,6 +9,7 @@ import com.grsu.teacherassistant.entities.Student;
 import com.grsu.teacherassistant.entities.StudentLesson;
 import com.grsu.teacherassistant.models.*;
 import com.grsu.teacherassistant.utils.FacesUtils;
+import com.grsu.teacherassistant.utils.FileUtils;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
+import static com.grsu.teacherassistant.utils.PropertyUtils.getProperty;
 
 /**
  * @author Pavel Zaychick
@@ -41,6 +45,9 @@ public class ShortLessonModeBean implements Serializable {
     private String newNote;
 
     public void init(Lesson lesson) {
+        if (Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME))) {
+            FileUtils.backupDatabase("OPEN_SHORT_LESSON_MODE");
+        }
         this.lesson = new LessonModel(EntityDAO.get(Lesson.class, lesson.getId()), true);
 
         studentsLazyModel = new LazyStudentDataModel(this.lesson.getStudents());
