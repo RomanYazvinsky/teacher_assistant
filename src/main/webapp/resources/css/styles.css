@@ -420,23 +420,6 @@ body {
 	position: relative;
 }
 
-.lesson-mode-table .skip:after,
-.lesson-mode-table .skip:before {
-	content: "";
-	position: absolute;
-	border-top: 1px solid black;
-	width: 105%;
-	transform-origin: 0% 0%;
-	left: 0;
-}
-.lesson-mode-table .skip:after {
-	transform: rotate(17deg);
-	top: 0;
-}
-.lesson-mode-table .skip:before {
-	transform: rotate(-17deg);
-	top: 21px;
-}
 
 #lessonModeForm .lesson-mode-table .ui-datatable-data .no-class,
 #shortLessonModeForm .lesson-mode-table .ui-datatable-data .no-class {
