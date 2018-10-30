@@ -81,6 +81,7 @@ public class Lesson implements AssistantEntity {
     private Map<Integer, StudentLesson> studentLessons;
 
     public Lesson() {
+        this.checked = false;
     }
 
     public Lesson(Lesson lesson) {
@@ -92,6 +93,7 @@ public class Lesson implements AssistantEntity {
         this.stream = lesson.stream;
         this.type = lesson.type;
         this.group = lesson.group;
+        this.checked = lesson.checked;
     }
 
     @Override
