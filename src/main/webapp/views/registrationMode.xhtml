@@ -59,11 +59,6 @@
                                          update=":lessonForm:lessonButtons"
                                          actionListener="#{serialBean.enableSound}"
                                          rendered="#{serialBean.recordStarted and not serialBean.soundEnabled}"/>
-                        <p:commandButton title="#{msg['btn.disableSound']}" icon="fa fa-fw fa-volume-off"
-                                         update=":lessonForm:lessonButtons"
-                                         actionListener="#{serialBean.disableSound}"
-                                         rendered="#{serialBean.recordStarted and serialBean.soundEnabled}"/>
-
                         <p:commandButton
                             title="#{msg[registrationModeBean.camera ? 'btn.camera.turnOff' : 'btn.camera.turnOn']}"
                             styleClass="#{registrationModeBean.camera ? 'red' : ''}"
@@ -130,7 +125,7 @@
                             </p:commandButton>
                         </p:overlayPanel>
                         <p:commandButton title="#{msg['btn.fastRegistration']}"
-                                         value="#{msg['btn.fastRegistration.short']}"
+                                         icon="fa fa-fw fa-bolt"
                                          actionListener="#{registrationModeBean.fastRegistration}"
                                          update="@([id$=views])"
                                          styleClass="margin-top-10px font-size-14pt"
@@ -358,6 +353,21 @@
                          rendered="#{not registrationModeBean.camera}"
                          header="#{msg['label.additional.info']}"
                          styleClass="additional-info h200px">
+
+                    <h:outputLabel value="#{msg['label.additional.lesson.info']} " styleClass="bold"/>
+                    <h:outputText id="note" styleClass="fa fa-info-circle"
+                                  rendered="#{registrationModeBean.selectedLesson.notes.size() gt 0 or not registrationModeBean.selectedLesson.description.isEmpty()}"/>
+                    <p:tooltip for="note" position="bottom"
+                               rendered="#{registrationModeBean.selectedLesson.notes.size() gt 0 or not registrationModeBean.selectedLesson.description.isEmpty()}">
+                        <h:outputText value="#{registrationModeBean.selectedLesson.description}"/>
+                        <ui:repeat var="note" value="#{registrationModeBean.selectedLesson.notes}">
+                            <h:panelGrid columns="2" columnClasses="w300px, w20px" styleClass="w100pc">
+                                <h:outputText value="#{note.description}"/>
+                                <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                            </h:panelGrid>
+                        </ui:repeat>
+                    </p:tooltip>
+                    <p:separator/>
                     <h:outputLabel value="#{registrationModeBean.processedStudent.fullName}" styleClass="bold"/>
 
                     <h:panelGroup rendered="#{notificationSettingsBean.active}">
@@ -543,6 +553,30 @@
                                          styleClass="red"/>
                     </h:panelGrid>
                 </ui:repeat>
+                <p:separator/>
+                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastLecture)}"
+                                 update=":lessonForm"
+                                 value="#{msg['lecture']}" rendered="#{registrationModeBean.lastLecture != null}"/>
+                <ui:repeat var="note"
+                           value="#{registrationModeBean.lastLecture.notes}">
+                    <h:panelGrid columns="3" columnClasses="w300px, w20px">
+                        <h:outputText value="#{note.description}"/>
+                        <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                    </h:panelGrid>
+                </ui:repeat>
+                <p:separator/>
+                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastPractice)}"
+                                 update=":lessonForm"
+                                 value="#{msg['practical']}" rendered="#{registrationModeBean.lastPractice != null}"/>
+                <ui:repeat var="note"
+                           value="#{registrationModeBean.lastPractice.notes}">
+                    <h:panelGrid columns="3" columnClasses="w300px, w20px">
+                        <h:outputText value="#{note.description}"/>
+                        <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                    </h:panelGrid>
+                </ui:repeat>
+                <p:separator/>
+
                 <p:inputTextarea value="#{registrationModeBean.newLessonNote}"/>
 
                 <p:commandButton value="#{msg['btn.save.exit']}" icon="fa fa-fw fa-save"

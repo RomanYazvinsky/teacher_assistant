@@ -862,3 +862,8 @@ body {
     width: 60px;
     padding: 2px;
 }
+
+.menu-items-right.ui-menuitem-link{
+    position: absolute;
+    color: #D32F2F;
+}

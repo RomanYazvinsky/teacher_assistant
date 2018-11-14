@@ -108,8 +108,6 @@ public class Lesson implements AssistantEntity {
         if (description != null ? !description.equals(lesson.description) : lesson.description != null) return false;
         if (createDate != null ? !createDate.equals(lesson.createDate) : lesson.createDate != null) return false;
         if (date != null ? !date.equals(lesson.date) : lesson.date != null) return false;
-//		if (!EntityUtils.compareEntity(stream, lesson.stream)) return false;
-//		if (!EntityUtils.compareEntity(group, lesson.group)) return false;
 
         return true;
     }

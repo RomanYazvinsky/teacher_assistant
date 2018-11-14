@@ -97,15 +97,6 @@
                                          actionListener="#{serialBean.stopRecord}"
                                          rendered="#{serialBean.recordStarted}"/>
 
-                        <p:commandButton title="#{msg['btn.enableSound']}" icon="fa fa-fw fa-volume-up"
-                                         update=":studentModeForm:buttons"
-                                         actionListener="#{serialBean.enableSound}"
-                                         rendered="#{serialBean.recordStarted and not serialBean.soundEnabled}"/>
-                        <p:commandButton title="#{msg['btn.disableSound']}" icon="fa fa-fw fa-volume-off"
-                                         update=":studentModeForm:buttons"
-                                         actionListener="#{serialBean.disableSound}"
-                                         rendered="#{serialBean.recordStarted and serialBean.soundEnabled}"/>
-
                         <p:commandButton update=":studentInfoForm"
                                          actionListener="#{studentBean.initStudent(studentModeBean.student)}"
                                          icon="fa fa-fw fa-pencil"

@@ -25,6 +25,9 @@
                                value="#{propertiesBean.examMarkWeight}"
                                minValue="0.00"
                                maxValue="1.00"/>
+                <h:outputLabel for="propertiesForm"
+                               value="#{msg['btn.enableSound']}"/>
+                <p:selectBooleanCheckbox value="#{serialBean.soundEnabled}"/>
             </h:panelGrid>
 
             <p:commandButton value="#{msg['btn.save.exit']}"

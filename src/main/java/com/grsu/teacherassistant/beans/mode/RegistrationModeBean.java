@@ -1,6 +1,7 @@
 package com.grsu.teacherassistant.beans.mode;
 
-import com.grsu.teacherassistant.beans.*;
+import com.grsu.teacherassistant.beans.AlarmBean;
+import com.grsu.teacherassistant.beans.NotificationSettingsBean;
 import com.grsu.teacherassistant.beans.utility.*;
 import com.grsu.teacherassistant.constants.Constants;
 import com.grsu.teacherassistant.dao.EntityDAO;
@@ -10,10 +11,7 @@ import com.grsu.teacherassistant.entities.*;
 import com.grsu.teacherassistant.models.*;
 import com.grsu.teacherassistant.push.resources.PushMessage;
 import com.grsu.teacherassistant.serial.SerialStatus;
-import com.grsu.teacherassistant.utils.EntityUtils;
-import com.grsu.teacherassistant.utils.FacesUtils;
-import com.grsu.teacherassistant.utils.FileUtils;
-import com.grsu.teacherassistant.utils.LocaleUtils;
+import com.grsu.teacherassistant.utils.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -118,6 +116,12 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     private String newNote;
     private String newLessonNote;
     private boolean nextLessonAvailable = false;
+    private Lesson lastLecture;
+    private Lesson lastPractice;
+
+    public void initLesson(Lesson lesson) {
+        this.initLesson(lesson, null);
+    }
 
     public void initLesson(Lesson lesson, List<Lesson> otherLessons) {
         runBackup("OPEN_REGISTRATION_MODE");
@@ -140,7 +144,6 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
 
             if (selectedLesson.getStream() != null) {
                 skipInfo = StudentDAO.getSkipInfo(selectedLesson.getStream().getId(), selectedLesson.getId());
-
                 lessonAbsentStudents = new ArrayList<>();
                 lessonPresentStudents = new ArrayList<>();
 
@@ -148,6 +151,9 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
 
                 absentStudentsLazyModel = new LazyStudentDataModel(lessonAbsentStudents);
                 presentStudentsLazyModel = new LazyStudentDataModel(lessonPresentStudents);
+
+                lastLecture = Trash.getLastLesson(selectedLesson, LessonType.LECTURE);
+                lastPractice = Trash.getLastLesson(selectedLesson, LessonType.PRACTICAL);
             }
 
             initLastLesson();
@@ -889,5 +895,4 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         newLessonNote = null;
         FacesUtils.closeDialog("lessonNotesDialog");
     }
-
 }

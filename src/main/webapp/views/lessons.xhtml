@@ -140,7 +140,8 @@
                 <h:outputText styleClass="float-right fa fa-check" style="color: #388E3C;"
                               rendered="#{lesson.checked}"/>
                 <h:outputText id="note" styleClass="float-right fa fa-info-circle"
-                              rendered="#{lesson.notes.size() gt 0 or not lesson.description.isEmpty()}"/>
+                              style="#{(lesson.notes.size() gt 0 or not lesson.description.isEmpty()) ? 'color: #D32F2F;' : 'color: blue;'}"
+                              onclick="PF('lessonNotesDialog').show()"/>
                 <p:tooltip for="note" position="bottom"
                            rendered="#{lesson.notes.size() gt 0 or not lesson.description.isEmpty()}">
                     <h:outputText value="#{lesson.description}"/>
@@ -196,12 +197,6 @@
                 <f:setPropertyActionListener value="studentMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{lessonsBean.selectedLesson}" target="#{lessonModeBean.lesson}"/>
             </p:menuitem>
-            <p:menuitem update=":lessonsForm"
-                        rendered="#{!lessonsBean.selectedLesson.checked}" value="#{msg['option.check']}"
-                        icon="fa fa-fw fa-check" actionListener="#{lessonsBean.toggleChecked()}"/>
-            <p:menuitem update=":lessonsForm"
-                        rendered="#{lessonsBean.selectedLesson.checked}" value="#{msg['option.uncheck']}"
-                        icon="fa fa-fw fa-ban" actionListener="#{lessonsBean.toggleChecked()}"/>
             <p:separator/>
             <p:menuitem value="#{msg['option.edit']}"
                         update=":lessonInfoForm"
@@ -220,6 +215,13 @@
                         oncomplete="PF('lessonNotesDialog').show()">
                 <f:setPropertyActionListener value="#{null}" target="#{lessonsBean.newNote}"/>
             </p:menuitem>
+            <p:menuitem update=":lessonsForm"
+                        rendered="#{!lessonsBean.selectedLesson.checked}" value="#{msg['option.check']}"
+                        icon="fa fa-fw fa-check" actionListener="#{lessonsBean.toggleChecked()}"/>
+            <p:menuitem update=":lessonsForm"
+                        rendered="#{lessonsBean.selectedLesson.checked}" value="#{msg['option.uncheck']}"
+                        icon="fa fa-fw fa-ban" actionListener="#{lessonsBean.toggleChecked()}"/>
+            <p:separator/>
         </p:contextMenu>
 
         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -248,6 +250,25 @@
                                          styleClass="red"/>
                     </h:panelGrid>
                 </ui:repeat>
+                <p:separator/>
+                <h:outputText value="#{msg['lecture']}"/>
+                <ui:repeat var="note"
+                           value="#{lessonsBean.getLastLecture(lessonsBean.selectedLesson).notes}">
+                    <h:panelGrid columns="3" columnClasses="w300px, w20px">
+                        <h:outputText value="#{note.description}"/>
+                        <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                    </h:panelGrid>
+                </ui:repeat>
+                <p:separator/>
+                <h:outputText value="#{msg['practical']}"/>
+                <ui:repeat var="note"
+                           value="#{lessonsBean.getLastPractice(lessonsBean.selectedLesson).notes}">
+                    <h:panelGrid columns="3" columnClasses="w300px, w20px">
+                        <h:outputText value="#{note.description}"/>
+                        <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
+                    </h:panelGrid>
+                </ui:repeat>
+                <p:separator/>
                 <p:inputTextarea value="#{lessonsBean.newNote}"/>
 
                 <p:commandButton value="#{msg['btn.save.exit']}" icon="fa fa-fw fa-save"

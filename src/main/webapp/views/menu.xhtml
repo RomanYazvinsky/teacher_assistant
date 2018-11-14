@@ -171,45 +171,42 @@
                     <f:setPropertyActionListener value="#{lessonsBean.getFirstLesson()}" target="#{lessonModeBean.lesson}"/>
                 </p:menuitem>
             </p:submenu>
-
-            <p:menuitem value="#{msg['menu.show.lessons']}" icon="fa fa-fw fa-calendar"
-                        actionListener="#{menuBean.changeView('lessons')}" update="@([id$=views])"
-                        rendered="#{sessionBean.connected}" disabled="#{sessionBean.activeView eq 'lessons'}">
-                <f:actionListener binding="#{registrationModeBean.clear()}"/>
-            </p:menuitem>
-
             <p:menuitem value="#{msg['menu.new.lesson']}"
-                        icon="fa fa-fw fa-book"
+                        icon="fa fa-fw fa-plus"
                         update=":lessonInfoForm"
                         actionListener="#{lessonBean.initLesson(null)}"
+                        style="right: 370px;"
+                        styleClass="menu-items-right"
                         rendered="#{sessionBean.connected}">
                 <p:resetInput target=":lessonInfoForm:lessonDetail"/>
             </p:menuitem>
-
             <p:menuitem value="#{msg['option.registrationMode']}"
                         update="@([id$=wrapper])"
                         icon="fa fa-fw fa-rss"
+                        style="right: 232px;"
+                        styleClass="menu-items-right"
                         actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons())}"
                         disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'registrationMode')}">
                 <f:setPropertyActionListener value="registrationMode" target="#{sessionBean.activeView}"/>
-                <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
-            </p:menuitem>
-            <p:menuitem value="#{msg['option.lesson']}"
-                        update="@([id$=wrapper])"
-                        icon="fa fa-fw fa-dedent"
-                        actionListener="#{shortLessonModeBean.initRegistration(lessonsBean.getFirstLesson())}"
-                        disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'shortLessonMode')}">
-                <f:setPropertyActionListener value="shortLessonMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
             </p:menuitem>
             <p:menuitem value="#{msg['option.studentMode']}"
                         update="@([id$=wrapper])"
                         icon="fa fa-fw fa-male"
                         actionListener="#{studentModeBean.initStudentMode(null, null)}"
+                        style="right: 137px;"
+                        styleClass="menu-items-right"
                         disabled="#{sessionBean.activeView eq 'studentMode'}">
                 <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
                 <f:setPropertyActionListener value="studentMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{lessonsBean.getFirstLesson()}" target="#{lessonModeBean.lesson}"/>
+            </p:menuitem>
+            <p:menuitem value="#{msg['menu.show.lessons']}" icon="fa fa-fw fa-calendar"
+                        actionListener="#{menuBean.changeView('lessons')}" update="@([id$=views])"
+                        style="right: 3px;"
+                        styleClass="menu-items-right"
+                        rendered="#{sessionBean.connected}" disabled="#{sessionBean.activeView eq 'lessons'}">
+                <f:actionListener binding="#{registrationModeBean.clear()}"/>
             </p:menuitem>
         </p:menubar>
     </h:form>

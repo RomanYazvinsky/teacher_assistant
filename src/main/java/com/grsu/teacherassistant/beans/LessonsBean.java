@@ -10,6 +10,7 @@ import com.grsu.teacherassistant.entities.Lesson;
 import com.grsu.teacherassistant.entities.Note;
 import com.grsu.teacherassistant.models.LessonType;
 import com.grsu.teacherassistant.utils.FacesUtils;
+import com.grsu.teacherassistant.utils.Trash;
 import lombok.Data;
 
 import javax.annotation.PostConstruct;
@@ -163,5 +164,19 @@ public class LessonsBean implements Serializable {
             return lessons.get(0);
         }
         return null;
+    }
+
+    public Lesson getLastLecture(Lesson currentLesson) {
+        if (currentLesson == null ) {
+            return null;
+        }
+        return Trash.getLastLesson(currentLesson, LessonType.LECTURE);
+    }
+
+    public Lesson getLastPractice(Lesson currentLesson) {
+        if (currentLesson == null ) {
+            return null;
+        }
+        return Trash.getLastLesson(currentLesson, LessonType.PRACTICAL);
     }
 }
