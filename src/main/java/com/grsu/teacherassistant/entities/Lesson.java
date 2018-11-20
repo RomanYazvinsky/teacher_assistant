@@ -80,6 +80,11 @@ public class Lesson implements AssistantEntity {
     @Cascade(CascadeType.DELETE)
     private Map<Integer, StudentLesson> studentLessons;
 
+    @Transient
+    private Lesson lastLectureLesson;
+    @Transient
+    private Lesson lastPracticeLesson;
+
     public Lesson() {
         this.checked = false;
     }
@@ -94,6 +99,8 @@ public class Lesson implements AssistantEntity {
         this.type = lesson.type;
         this.group = lesson.group;
         this.checked = lesson.checked;
+        this.lastLectureLesson = lesson.lastLectureLesson;
+        this.lastPracticeLesson = lesson.lastPracticeLesson;
     }
 
     @Override

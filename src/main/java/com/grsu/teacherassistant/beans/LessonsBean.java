@@ -10,7 +10,7 @@ import com.grsu.teacherassistant.entities.Lesson;
 import com.grsu.teacherassistant.entities.Note;
 import com.grsu.teacherassistant.models.LessonType;
 import com.grsu.teacherassistant.utils.FacesUtils;
-import com.grsu.teacherassistant.utils.Trash;
+import com.grsu.teacherassistant.utils.LessonUtils;
 import lombok.Data;
 
 import javax.annotation.PostConstruct;
@@ -133,7 +133,7 @@ public class LessonsBean implements Serializable {
     }
 
     public void openRegistrationMode() {
-        registrationModeBean.initLesson(selectedLesson, lessons);
+        registrationModeBean.initLesson(selectedLesson, lessons, true);
         menuBean.changeView("registrationMode");
         menuBean.hideMenu();
     }
@@ -166,17 +166,23 @@ public class LessonsBean implements Serializable {
         return null;
     }
 
-    public Lesson getLastLecture(Lesson currentLesson) {
+    public Lesson getLastLecture(Lesson currentLesson, boolean forceLoading) {
         if (currentLesson == null ) {
             return null;
         }
-        return Trash.getLastLesson(currentLesson, LessonType.LECTURE);
+        if (currentLesson.getLastLectureLesson() == null) {
+            currentLesson.setLastLectureLesson(LessonUtils.getLastLesson(currentLesson, LessonType.LECTURE, forceLoading));
+        }
+        return currentLesson.getLastLectureLesson();
     }
 
-    public Lesson getLastPractice(Lesson currentLesson) {
+    public Lesson getLastPractice(Lesson currentLesson, boolean forceLoading) {
         if (currentLesson == null ) {
             return null;
         }
-        return Trash.getLastLesson(currentLesson, LessonType.PRACTICAL);
+        if (currentLesson.getLastPracticeLesson() == null) {
+            currentLesson.setLastPracticeLesson(LessonUtils.getLastLesson(currentLesson, LessonType.PRACTICAL, forceLoading));
+        }
+        return currentLesson.getLastPracticeLesson();
     }
 }

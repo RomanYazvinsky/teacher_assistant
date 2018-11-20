@@ -13,13 +13,16 @@ import java.util.stream.Collectors;
 /**
  * This temporary (hah) class is used for decreasing of copy-paste code
  */
-public class Trash {
+public class LessonUtils {
 
-    public static List<Note> loadLastLectureNotes(Lesson currentLesson) {
-        return getLastNotesOf(getLastLesson(currentLesson, LessonType.LECTURE));
+    public static List<Note> loadLastLectureNotes(Lesson currentLesson, boolean forceLoading) {
+        return getLastNotesOf(getLastLesson(currentLesson, LessonType.LECTURE, forceLoading));
     }
 
-    public static Lesson getLastLesson(Lesson currentLesson, LessonType lessonType) {
+    public static Lesson getLastLesson(Lesson currentLesson, LessonType lessonType, boolean forceLoading) {
+        if (!forceLoading) {
+            return null;
+        }
         List<Lesson> lessons = LessonDAO.getAll(null, currentLesson.getDate(), true, currentLesson.getStream().getId(), true, null, null, null, lessonType);
         if (lessons == null) {
             return null;
@@ -46,7 +49,7 @@ public class Trash {
         return new ArrayList<>();
     }
 
-    public static List<Note> loadLastPracticeNotes(Lesson currentLesson) {
-        return getLastNotesOf(getLastLesson(currentLesson, LessonType.PRACTICAL));
+    public static List<Note> loadLastPracticeNotes(Lesson currentLesson, boolean forceLoading) {
+        return getLastNotesOf(getLastLesson(currentLesson, LessonType.PRACTICAL, forceLoading));
     }
 }

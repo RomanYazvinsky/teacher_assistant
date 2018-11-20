@@ -867,3 +867,7 @@ body {
     position: absolute;
     color: #D32F2F;
 }
+
+.separation-line {
+    border-color: #388E3C;
+}

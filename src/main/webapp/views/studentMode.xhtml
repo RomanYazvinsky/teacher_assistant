@@ -138,7 +138,7 @@
                             </p:commandButton>
                             <p:commandButton title="#{msg['btn.registerMode']}"
                                              value="#{msg['btn.registerMode']}"
-                                             actionListener="#{registrationModeBean.initLesson(registrationModeBean.selectedLesson)}"
+                                             actionListener="#{registrationModeBean.initLesson(registrationModeBean.selectedLesson, propertiesBean.isLastLessonNotesLoadingEnabled)}"
                                              styleClass="block w100pc margin-bottom-10px"
                                              disabled="#{registrationModeBean.selectedLesson eq null}"
                                              update="@([id$=views])">

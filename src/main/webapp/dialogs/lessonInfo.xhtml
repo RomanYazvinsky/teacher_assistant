@@ -107,7 +107,7 @@
                                      update=":lessonInfoForm:lessonDetail"
                                      icon="fa fa-fw fa-rss">
                         <f:actionListener binding="#{lessonBean.save()}"/>
-                        <f:actionListener binding="#{registrationModeBean.initLesson(lessonBean.lesson)}"/>
+                        <f:actionListener binding="#{registrationModeBean.initLesson(lessonBean.lesson, propertiesBean.isLastLessonNotesLoadingEnabled)}"/>
                         <f:actionListener binding="#{lessonBean.exit()}"/>
                         <f:setPropertyActionListener value="#{null}" target="#{lessonsBean.lessons}"/>
                         <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>

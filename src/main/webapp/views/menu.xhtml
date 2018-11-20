@@ -125,7 +125,7 @@
                 <p:menuitem value="#{msg['option.registrationMode']}"
                             update="@([id$=wrapper])"
                             icon="fa fa-fw fa-rss"
-                            actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons())}"
+                            actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons(), propertiesBean.isLastLessonNotesLoadingEnabled)}"
                             disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'registrationMode')}">
                     <f:setPropertyActionListener value="registrationMode" target="#{sessionBean.activeView}"/>
                     <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
@@ -164,8 +164,7 @@
                 <p:menuitem value="#{msg['option.studentMode']}"
                             update="@([id$=wrapper])"
                             icon="fa fa-fw fa-male"
-                            actionListener="#{studentModeBean.initStudentMode(null, null)}"
-                            disabled="#{sessionBean.activeView eq 'studentMode'}">
+                            actionListener="#{studentModeBean.initStudentMode(null, null)}">
                     <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
                     <f:setPropertyActionListener value="studentMode" target="#{sessionBean.activeView}"/>
                     <f:setPropertyActionListener value="#{lessonsBean.getFirstLesson()}" target="#{lessonModeBean.lesson}"/>
@@ -185,7 +184,7 @@
                         icon="fa fa-fw fa-rss"
                         style="right: 232px;"
                         styleClass="menu-items-right"
-                        actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons())}"
+                        actionListener="#{registrationModeBean.initLesson(lessonsBean.getFirstLesson(), lessonsBean.getLessons(), propertiesBean.isLastLessonNotesLoadingEnabled)}"
                         disabled="#{(lessonsBean.getFirstLesson() eq null or sessionBean.activeView eq 'registrationMode')}">
                 <f:setPropertyActionListener value="registrationMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
@@ -195,8 +194,7 @@
                         icon="fa fa-fw fa-male"
                         actionListener="#{studentModeBean.initStudentMode(null, null)}"
                         style="right: 137px;"
-                        styleClass="menu-items-right"
-                        disabled="#{sessionBean.activeView eq 'studentMode'}">
+                        styleClass="menu-items-right">
                 <f:setPropertyActionListener value="#{false}" target="#{menuBean.showMenu}"/>
                 <f:setPropertyActionListener value="studentMode" target="#{sessionBean.activeView}"/>
                 <f:setPropertyActionListener value="#{lessonsBean.getFirstLesson()}" target="#{lessonModeBean.lesson}"/>

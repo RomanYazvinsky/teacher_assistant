@@ -12,7 +12,9 @@ import java.io.Serializable;
 
 import static com.grsu.teacherassistant.utils.FacesUtils.closeDialog;
 import static com.grsu.teacherassistant.utils.FacesUtils.update;
-import static com.grsu.teacherassistant.utils.PropertyUtils.*;
+import static com.grsu.teacherassistant.utils.PropertyUtils.EXAM_MARK_WEIGHT_PROPERTY_NAME;
+import static com.grsu.teacherassistant.utils.PropertyUtils.LAST_NOTES_LOADING;
+import static com.grsu.teacherassistant.utils.PropertyUtils.setProperty;
 
 /**
  * @author Pavel Zaychick
@@ -25,10 +27,11 @@ public class PropertiesBean implements Serializable {
     private static final String PROPERTIES_DIALOG_NAME = "propertiesDialog";
 
     private Double examMarkWeight;
+    private Boolean isLastLessonNotesLoadingEnabled;
 
     public void init() {
         examMarkWeight = ApplicationUtils.examMarkWeight();
-
+        isLastLessonNotesLoadingEnabled = ApplicationUtils.isLastNotesLoadingEnabled();
         FacesUtils.showDialog(PROPERTIES_DIALOG_NAME);
     }
 
@@ -38,6 +41,7 @@ public class PropertiesBean implements Serializable {
 
     public void save() {
         setProperty(EXAM_MARK_WEIGHT_PROPERTY_NAME, String.format("%.2f", examMarkWeight));
+        setProperty(LAST_NOTES_LOADING, isLastLessonNotesLoadingEnabled.toString());
         update("views");
         exit();
     }

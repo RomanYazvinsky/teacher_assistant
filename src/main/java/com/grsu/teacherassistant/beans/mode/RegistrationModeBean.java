@@ -119,11 +119,11 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
     private Lesson lastLecture;
     private Lesson lastPractice;
 
-    public void initLesson(Lesson lesson) {
-        this.initLesson(lesson, null);
+    public void initLesson(Lesson lesson, boolean forceLoading) {
+        this.initLesson(lesson, null, forceLoading);
     }
 
-    public void initLesson(Lesson lesson, List<Lesson> otherLessons) {
+    public void initLesson(Lesson lesson, List<Lesson> otherLessons, boolean forceLoading) {
         runBackup("OPEN_REGISTRATION_MODE");
         this.orderedLessons = otherLessons;
         initialData = lesson;
@@ -152,8 +152,8 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
                 absentStudentsLazyModel = new LazyStudentDataModel(lessonAbsentStudents);
                 presentStudentsLazyModel = new LazyStudentDataModel(lessonPresentStudents);
 
-                lastLecture = Trash.getLastLesson(selectedLesson, LessonType.LECTURE);
-                lastPractice = Trash.getLastLesson(selectedLesson, LessonType.PRACTICAL);
+                lastLecture = LessonUtils.getLastLesson(selectedLesson, LessonType.LECTURE, forceLoading);
+                lastPractice = LessonUtils.getLastLesson(selectedLesson, LessonType.PRACTICAL, forceLoading);
             }
 
             initLastLesson();
@@ -192,7 +192,7 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         });
         EntityDAO.update(new ArrayList<>(selectedLesson.getStudentLessons().values()));
         fastRegistration = false;
-        initLesson(selectedLesson, orderedLessons);
+        initLesson(selectedLesson, orderedLessons, true);
     }
 
     public Lesson getNextLesson() {

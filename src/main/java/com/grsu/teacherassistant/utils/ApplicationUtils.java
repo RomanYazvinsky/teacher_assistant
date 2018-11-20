@@ -34,4 +34,8 @@ public class ApplicationUtils {
     public static boolean isAutoBackupOnNewModeEnabled() {
        return Boolean.valueOf(getProperty(AUTO_BACKUP_NEW_MODE_PROPERTY_NAME));
     }
+
+    public static boolean isLastNotesLoadingEnabled() {
+        return Boolean.valueOf(getProperty(LAST_NOTES_LOADING));
+    }
 }

@@ -15,6 +15,7 @@ public class PropertyUtils {
     public static final String EXAM_MARK_WEIGHT_PROPERTY_NAME = "mark.exam.weight";
     public static final String AUTO_BACKUP_PROPERTY_NAME = "autobackup";
     public static final String AUTO_BACKUP_NEW_MODE_PROPERTY_NAME = "autobackup.newmode";
+    public static final String LAST_NOTES_LOADING = "loading.last.notes";
 
 	public static String getProperty(String name) {
 		Properties props = new Properties();

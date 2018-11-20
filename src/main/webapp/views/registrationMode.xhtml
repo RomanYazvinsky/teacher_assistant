@@ -147,7 +147,7 @@
                                          update=":lessonForm"
                                          actionListener="#{registrationModeBean.initLesson(
                                             registrationModeBean.getNextLesson(),
-                                            registrationModeBean.orderedLessons
+                                            registrationModeBean.orderedLessons, propertiesBean.isLastLessonNotesLoadingEnabled
                                           )}"
                                          rendered="#{registrationModeBean.nextLessonAvailable}"/>
                     </p:panel>
@@ -554,7 +554,7 @@
                     </h:panelGrid>
                 </ui:repeat>
                 <p:separator/>
-                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastLecture)}"
+                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastLecture, propertiesBean.isLastLessonNotesLoadingEnabled)}"
                                  update=":lessonForm"
                                  value="#{msg['lecture']}" rendered="#{registrationModeBean.lastLecture != null}"/>
                 <ui:repeat var="note"
@@ -565,7 +565,7 @@
                     </h:panelGrid>
                 </ui:repeat>
                 <p:separator/>
-                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastPractice)}"
+                <p:commandButton actionListener="#{registrationModeBean.initLesson(registrationModeBean.lastPractice, propertiesBean.isLastLessonNotesLoadingEnabled)}"
                                  update=":lessonForm"
                                  value="#{msg['practical']}" rendered="#{registrationModeBean.lastPractice != null}"/>
                 <ui:repeat var="note"
