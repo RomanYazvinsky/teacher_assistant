@@ -52,8 +52,8 @@
                 <h:outputLabel for="past" value="#{msg['lessons.past']}" styleClass="margin-left-10px"/>
             </h:panelGroup>
             <h:panelGroup styleClass="inline-block">
-                <p:selectBooleanCheckbox id="loadNotes" value="#{propertiesBean.isLastLessonNotesLoadingEnabled}"/>
-                <h:outputLabel for="loadNotes" value="#{msg['btn.enableLastNotesLoading']}" styleClass="margin-left-10px"/>
+                <p:selectBooleanCheckbox id="loadNotes" value="#{lessonsBean.loadPreviousNotes}"/>
+                <h:outputLabel for="loadNotes" styleClass="margin-left-10px fa fa-info-circle"/>
             </h:panelGroup>
             <h:panelGroup styleClass="inline-block">
                 <h:outputLabel for="schedules" value="#{msg['lessons.time']}" styleClass="margin-right-10px"/>
@@ -147,8 +147,8 @@
                               onclick="PF('lessonNotesDialog').show()"/>
                 <p:tooltip for="note" position="bottom"
                            rendered="#{lesson.notes.size() gt 0
-                            or lessonsBean.getLastPractice(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes.size() gt 0
-                             or lessonsBean.getLastLecture(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes.size() gt 0
+                            or lessonsBean.getLastPractice(lesson).notes.size() gt 0
+                             or lessonsBean.getLastLecture(lesson).notes.size() gt 0
                               or not lesson.description.isEmpty()}">
                     <h:outputText value="#{lesson.description}"/>
                     <ui:repeat var="note" value="#{lesson.notes}">
@@ -157,23 +157,23 @@
                             <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
                         </h:panelGrid>
                     </ui:repeat>
-                    <h:panelGroup rendered="#{lessonsBean.getLastLecture(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes.size() gt 0}">
+                    <h:panelGroup rendered="#{lessonsBean.getLastLecture(lesson).notes.size() gt 0}">
                         <p:separator/>
                         <h:outputText value="#{msg['lecture']}"/>
                         <p:separator styleClass="separation-line"/>
                     </h:panelGroup>
-                    <ui:repeat var="note" value="#{lessonsBean.getLastLecture(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes}">
+                    <ui:repeat var="note" value="#{lessonsBean.getLastLecture(lesson).notes}">
                         <h:panelGrid columns="2" columnClasses="w300px, w20px" styleClass="w100pc">
                             <h:outputText value="#{note.description}"/>
                             <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
                         </h:panelGrid>
                     </ui:repeat>
-                    <h:panelGroup rendered="#{lessonsBean.getLastPractice(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes.size() gt 0}">
+                    <h:panelGroup rendered="#{lessonsBean.getLastPractice(lesson).notes.size() gt 0}">
                         <p:separator/>
                         <h:outputText value="#{msg['practical']}"/>
                         <p:separator styleClass="separation-line"/>
                     </h:panelGroup>
-                    <ui:repeat var="note" value="#{lessonsBean.getLastPractice(lesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes}">
+                    <ui:repeat var="note" value="#{lessonsBean.getLastPractice(lesson).notes}">
                         <h:panelGrid columns="2" columnClasses="w300px, w20px" styleClass="w100pc">
                             <h:outputText value="#{note.description}"/>
                             <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
@@ -281,7 +281,7 @@
                 <p:separator/>
                 <h:outputText value="#{msg['lecture']}"/>
                 <ui:repeat var="note"
-                           value="#{lessonsBean.getLastLecture(lessonsBean.selectedLesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes}">
+                           value="#{lessonsBean.getLastLecture(lessonsBean.selectedLesson).notes}">
                     <h:panelGrid columns="3" columnClasses="w300px, w20px">
                         <h:outputText value="#{note.description}"/>
                         <h:outputText value="#{note.createDate}" converter="localDateConverter"/>
@@ -290,7 +290,7 @@
                 <p:separator/>
                 <h:outputText value="#{msg['practical']}"/>
                 <ui:repeat var="note"
-                           value="#{lessonsBean.getLastPractice(lessonsBean.selectedLesson, propertiesBean.isLastLessonNotesLoadingEnabled).notes}">
+                           value="#{lessonsBean.getLastPractice(lessonsBean.selectedLesson).notes}">
                     <h:panelGrid columns="3" columnClasses="w300px, w20px">
                         <h:outputText value="#{note.description}"/>
                         <h:outputText value="#{note.createDate}" converter="localDateConverter"/>

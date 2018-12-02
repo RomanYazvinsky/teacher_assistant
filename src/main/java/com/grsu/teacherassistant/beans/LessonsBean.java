@@ -43,6 +43,7 @@ public class LessonsBean implements Serializable {
     private LocalDateTime dateTo;
     private boolean closed;
     private boolean past = true;
+    private boolean loadPreviousNotes = true;
     private Integer streamId;
     private Integer disciplineId;
     private Integer scheduleId;
@@ -166,22 +167,22 @@ public class LessonsBean implements Serializable {
         return null;
     }
 
-    public Lesson getLastLecture(Lesson currentLesson, boolean forceLoading) {
+    public Lesson getLastLecture(Lesson currentLesson) {
         if (currentLesson == null ) {
             return null;
         }
         if (currentLesson.getLastLectureLesson() == null) {
-            currentLesson.setLastLectureLesson(LessonUtils.getLastLesson(currentLesson, LessonType.LECTURE, forceLoading));
+            currentLesson.setLastLectureLesson(LessonUtils.getLastLesson(currentLesson, LessonType.LECTURE, loadPreviousNotes));
         }
         return currentLesson.getLastLectureLesson();
     }
 
-    public Lesson getLastPractice(Lesson currentLesson, boolean forceLoading) {
+    public Lesson getLastPractice(Lesson currentLesson) {
         if (currentLesson == null ) {
             return null;
         }
         if (currentLesson.getLastPracticeLesson() == null) {
-            currentLesson.setLastPracticeLesson(LessonUtils.getLastLesson(currentLesson, LessonType.PRACTICAL, forceLoading));
+            currentLesson.setLastPracticeLesson(LessonUtils.getLastLesson(currentLesson, LessonType.PRACTICAL, loadPreviousNotes));
         }
         return currentLesson.getLastPracticeLesson();
     }

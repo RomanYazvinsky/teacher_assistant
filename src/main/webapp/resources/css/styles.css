@@ -456,6 +456,8 @@ body {
 
 .lesson-mode-table td.student-info a {
 	text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .lesson-mode-table th.student-info {
@@ -465,7 +467,7 @@ body {
 
 .lesson-mode-table .skips {
 	background-color: rgba(0, 246, 255, 0.3);
-	width: 30px;
+	width: 30px !important;
 	padding: 0;
 	text-align: center;
 	font-weight: bold;
@@ -473,7 +475,7 @@ body {
 
 .lesson-mode-table .average-attestation {
 	background-color: rgba(249, 233, 2, 0.3);
-	width: 40px;
+	width: 40px !important;
 	padding: 0;
 	text-align: center;
 	font-weight: bold;
@@ -481,7 +483,7 @@ body {
 
 .lesson-mode-table .exams {
 	background-color: rgba(25, 193, 72, 0.3);
-	width: 40px;
+	width: 40px !important;
 	padding: 0;
 	text-align: center;
 	font-weight: bold;
@@ -870,4 +872,12 @@ body {
 
 .separation-line {
     border-color: #388E3C;
+}
+
+.w250px.student.ui-filter-column {
+    width: 250px !important;
+}
+
+.student.student-info span {
+    display: inline-flex;
 }

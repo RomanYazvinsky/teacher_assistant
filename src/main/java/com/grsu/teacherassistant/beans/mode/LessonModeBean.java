@@ -5,7 +5,6 @@ import com.grsu.teacherassistant.dao.EntityDAO;
 import com.grsu.teacherassistant.dao.LessonDAO;
 import com.grsu.teacherassistant.dao.StudentDAO;
 import com.grsu.teacherassistant.entities.*;
-import com.grsu.teacherassistant.entities.StudentLesson;
 import com.grsu.teacherassistant.models.*;
 import com.grsu.teacherassistant.utils.FacesUtils;
 import com.grsu.teacherassistant.utils.FileUtils;
@@ -21,14 +20,7 @@ import javax.faces.event.ValueChangeEvent;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.grsu.teacherassistant.utils.PropertyUtils.AUTO_BACKUP_NEW_MODE_PROPERTY_NAME;
@@ -55,7 +47,7 @@ public class LessonModeBean implements Serializable {
     private Integer entityId;
 
     private List<LessonStudentModel> students;
-    private LessonStudentModel selectedStudent;
+    private LessonStudentModel selectedLessonStudentModel;
     private LazyStudentDataModel studentsLazyModel;
 
     private LessonModel selectedLesson;
@@ -90,7 +82,7 @@ public class LessonModeBean implements Serializable {
         entityId = null;
 
         students = null;
-        selectedStudent = null;
+        selectedLessonStudentModel = null;
         studentsLazyModel = null;
 
         selectedType = null;
@@ -164,10 +156,15 @@ public class LessonModeBean implements Serializable {
     public void initRegisteredDialog() {
         if (Constants.STUDENT_LESSON.equals(selectedType)) {
             selectedLesson = calculateSelectedLesson();
-            registered = selectedStudent.getStudent().getStudentLessons().get(selectedLesson.getId()).isRegistered();
+            registered = selectedLessonStudentModel.getStudent().getStudentLessons().get(selectedLesson.getId()).isRegistered();
         } else {
             selectedLesson = null;
         }
+    }
+
+    public boolean getIsStudentRegistered() {
+        initRegisteredDialog();
+        return registered;
     }
 
     public void initNotes() {
@@ -176,15 +173,15 @@ public class LessonModeBean implements Serializable {
 
         switch (selectedType) {
             case Constants.STUDENT_LESSON:
-                StudentLesson sc = selectedStudent.getStudent().getStudentLessons().get(selectedLesson.getId());
+                StudentLesson sc = selectedLessonStudentModel.getStudent().getStudentLessons().get(selectedLesson.getId());
                 if (sc != null) {
                     notes = sc.getNotes();
                     entityId = sc.getId();
                 }
                 break;
             case Constants.STUDENT:
-                notes = selectedStudent.getStudent().getNotes();
-                entityId = selectedStudent.getStudent().getId();
+                notes = selectedLessonStudentModel.getStudent().getNotes();
+                entityId = selectedLessonStudentModel.getStudent().getId();
                 break;
             case Constants.LESSON:
                 notes = selectedLesson.getLesson().getNotes();
@@ -220,7 +217,7 @@ public class LessonModeBean implements Serializable {
         } else {
 
         }
-}
+    }
 
     public void changeAttestationMark(ValueChangeEvent event) {
         int attestationId = Integer.parseInt(String.valueOf(event.getComponent().getAttributes().get("attestationId")));
@@ -228,7 +225,7 @@ public class LessonModeBean implements Serializable {
         for (LessonStudentModel lessonStudentModel : students) {
             if (studentId == lessonStudentModel.getId()) {
                 lessonStudentModel.updateAttestationMark(attestationId, (Mark) event.getNewValue());
-                System.out.println("lessonModeTable:" + studentsLazyModel.getRowIndex()+ ":averageAttestation");
+                System.out.println("lessonModeTable:" + studentsLazyModel.getRowIndex() + ":averageAttestation");
                 System.out.println(lessonStudentModel.getAverageAttestation());
                 break;
             }
@@ -237,7 +234,7 @@ public class LessonModeBean implements Serializable {
     }
 
     public void updateAverageAttestation() {
-        FacesUtils.update("lessonModeTable:" + studentsLazyModel.getRowIndex()+ ":averageAttestation");
+        FacesUtils.update("lessonModeTable:" + studentsLazyModel.getRowIndex() + ":averageAttestation");
     }
 
     public void saveNote() {
@@ -252,13 +249,38 @@ public class LessonModeBean implements Serializable {
             newNote = null;
         }
         FacesUtils.closeDialog("notesDialog");
+    }
 
+    public void updateLessonSkipInfo(StudentLesson studentLesson) {
+        studentLesson.setRegistered(!studentLesson.isRegistered());
+
+        if (!studentLesson.isRegistered()) {
+            studentLesson.setRegistrationTime(null);
+            studentLesson.setRegistrationType(null);
+        } else {
+            studentLesson.setRegistrationTime(LocalTime.now());
+            studentLesson.setRegistrationType(Constants.REGISTRATION_TYPE_MANUAL);
+        }
+        EntityDAO.save(studentLesson);
+        selectedLessonStudentModel.updateSkips(stream);
+    }
+
+    public StudentLesson getCurrentStudentLesson() {
+        initRegisteredDialog();
+        if (selectedLessonStudentModel == null
+            || selectedLessonStudentModel.getStudent() == null
+            || selectedLessonStudentModel.getStudent().getStudentLessons() == null
+            || selectedLessonStudentModel.getStudent().getStudentLessons().size() == 0
+        ) {
+            return null;
+        }
+        return selectedLessonStudentModel.getStudent().getStudentLessons().get(selectedLesson.getId());
     }
 
     public void saveRegisteredInfo() {
-        boolean oldValue = selectedStudent.getStudent().getStudentLessons().get(selectedLesson.getId()).isRegistered();
+        boolean oldValue = selectedLessonStudentModel.getStudent().getStudentLessons().get(selectedLesson.getId()).isRegistered();
         if (oldValue != registered) {
-            StudentLesson studentLesson = selectedStudent.getStudent().getStudentLessons().get(selectedLesson.getId());
+            StudentLesson studentLesson = selectedLessonStudentModel.getStudent().getStudentLessons().get(selectedLesson.getId());
             studentLesson.setRegistered(registered);
             if (!registered) {
                 studentLesson.setRegistrationTime(null);
