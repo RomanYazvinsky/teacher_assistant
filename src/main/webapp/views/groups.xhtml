@@ -68,6 +68,13 @@
                         actionListener="#{groupsBean.removeGroup(groupsBean.selectedGroup)}">
                 <p:confirm header="#{msg['warning']}" message="#{msg['warning.sure.delete']}" icon="ui-icon-alert"/>
             </p:menuitem>
+            <p:menuitem value="#{msg['option.removeCascade']}"
+                        update=":groupsForm"
+                        icon="ui-icon-close"
+                        styleClass="red"
+                        actionListener="#{groupsBean.removeGroupCascade(groupsBean.selectedGroup)}">
+                <p:confirm header="#{msg['warning']}" message="#{msg['warning.sure.delete']}" icon="ui-icon-alert"/>
+            </p:menuitem>
         </p:contextMenu>
 
         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

@@ -3,13 +3,14 @@ package com.grsu.teacherassistant.beans;
 import com.grsu.teacherassistant.dao.EntityDAO;
 import com.grsu.teacherassistant.dao.GroupDAO;
 import com.grsu.teacherassistant.entities.Group;
+import com.grsu.teacherassistant.entities.Student;
 import lombok.Data;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Pavel Zaychick
@@ -39,5 +40,13 @@ public class GroupsBean implements Serializable {
 
     public void search() {
         groups = null;
+    }
+
+    public void removeGroupCascade(Group group) {
+        List<Student> all = EntityDAO.getAll(Student.class);
+        List<Student> studentsToDelete = all.stream().filter(student -> student.getGroups().size() == 1 && student.getGroups().get(0).getId().equals(group.getId())).collect(Collectors.toList());
+        EntityDAO.delete(studentsToDelete);
+        EntityDAO.delete(group);
+        groups.remove(group);
     }
 }
