@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author Pavel Zaychick
@@ -24,7 +26,7 @@ public class StudentService {
 
 	public static String getPersonnelNumber(Integer cardId) {
 		JSONObject json = readJsonFromUrl(PERSONNEL_NUMBER_URL + Integer.toString(cardId));
-		if (json != null) {
+		if (json != null && json.get(PERSONNEL_NUMBER_NAME) != JSONObject.NULL) {
 			return (String) json.get(PERSONNEL_NUMBER_NAME);
 		}
 		return null;
@@ -37,7 +39,14 @@ public class StudentService {
 
 			ImageIO.write(image, "jpg", FileUtils.getFile(FileUtils.STUDENTS_PHOTO_FOLDER_PATH, cardUid, FileUtils.STUDENTS_PHOTO_EXTENSION));
 			return true;
-		} catch (IOException e) {
+		} catch (Exception e) {
+		    if (Files.exists(Paths.get(FileUtils.STUDENTS_PHOTO_FOLDER_PATH, cardUid, FileUtils.STUDENTS_PHOTO_EXTENSION))) {
+                try {
+                    Files.delete(Paths.get(FileUtils.STUDENTS_PHOTO_FOLDER_PATH, cardUid, FileUtils.STUDENTS_PHOTO_EXTENSION));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
 			LOGGER.info(STUDENT_PHOTO_URL + personnelNumber + STUDENT_PHOTO_EXTENSION);
 			e.printStackTrace();
 		}
@@ -51,7 +60,7 @@ public class StudentService {
 				BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 				String jsonText = readAll(rd).replaceAll("\\[", "").replaceAll("\\]", "");
 				return new JSONObject(jsonText);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				is.close();
