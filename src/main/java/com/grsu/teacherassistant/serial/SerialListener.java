@@ -69,7 +69,13 @@ public class SerialListener implements SerialPortEventListener {
                 LOGGER.error(ex.getMessage(), ex);
             }
         }
-
+        else {
+            try {
+                serialPort.readBytes();
+            } catch (SerialPortException e) {
+                LOGGER.info(e.toString());
+        }
+        }
         LOGGER.info("<== serialEvent()" + (System.currentTimeMillis() - t));
     }
 
