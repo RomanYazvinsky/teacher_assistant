@@ -29,6 +29,7 @@ public class SerialListener implements SerialPortEventListener {
     private StringBuilder readedString;
     private String uid;
 
+    @Override
     public void serialEvent(SerialPortEvent event) {
         final long t = System.currentTimeMillis();
         LOGGER.info("==> serialEvent()");
@@ -65,7 +66,7 @@ public class SerialListener implements SerialPortEventListener {
                 }
 
 
-            } catch (SerialPortException ex) {
+            } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
             }
         }
