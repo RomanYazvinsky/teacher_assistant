@@ -1,8 +1,8 @@
 package com.grsu.teacherassistant.dao;
 
 import com.grsu.teacherassistant.constants.Constants;
-import com.grsu.teacherassistant.models.SkipInfo;
 import com.grsu.teacherassistant.entities.Student;
+import com.grsu.teacherassistant.models.SkipInfo;
 import com.grsu.teacherassistant.utils.db.DBSessionFactory;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -18,14 +18,25 @@ public class StudentDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(StudentDAO.class);
 
     public static List<Student> getAll() {
+        return getAll(false);
+    }
+
+    public static List<Student> getAll(boolean includeArchived) {
         try (Session session = DBSessionFactory.getSession()) {
             LOGGER.info("Start loading Students from database.");
-            Query query = session.createQuery("" +
+            String queryString = "" +
                 "select distinct s " +
                 "from Student s " +
-                "   left join fetch s.groups g " +
-                "where (g.active = true and (g.expirationDate > current_date or g.expirationDate is null)) or size (s.groups) = 0 " +
-                "order by s.lastName, s.firstName");
+                "   left join fetch s.groups g %s" +
+                "order by s.lastName, s.firstName";
+            if (!includeArchived) {
+                queryString = String.format(queryString,
+                    "where (g.active = true and (g.expirationDate > current_date or g.expirationDate is null)) or size (s.groups) = 0 "
+                );
+            } else {
+                queryString = String.format(queryString, "");
+            }
+            Query query = session.createQuery(queryString);
             return query.getResultList();
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);

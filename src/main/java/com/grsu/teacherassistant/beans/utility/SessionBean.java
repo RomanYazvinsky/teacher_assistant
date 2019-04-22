@@ -40,6 +40,7 @@ public class SessionBean implements Serializable {
     private List<Stream> streams;
     private List<Group> groups;
     private List<Student> students;
+    private boolean lastQuery = false;
 
     @Getter
     @Setter
@@ -177,8 +178,12 @@ public class SessionBean implements Serializable {
     }
 
     public List<Student> getStudents() {
-        if (students == null) {
-            students = StudentDAO.getAll();
+        return getStudents(false);
+    }
+    public List<Student> getStudents(boolean includeArchived) {
+        if (students == null || includeArchived != lastQuery) {
+            students = StudentDAO.getAll(includeArchived);
+            lastQuery = includeArchived;
         }
         return students;
     }

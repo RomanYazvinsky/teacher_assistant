@@ -51,6 +51,7 @@
                         <p:ajax listener="#{studentModeBean.initStudentMode(studentModeBean.student, null)}"
                                 update=":studentModeForm"/>
                     </p:selectOneMenu>
+
                     <h:panelGroup styleClass="buttons">
                         <p:commandButton icon="fa fa-fw fa-arrow-right"
                                          title="#{msg['studentMode.btn.next']}"
@@ -166,7 +167,16 @@
                                          rendered="#{not menuBean.showMenu}"/>
 
                     </h:panelGroup>
+
                 </h:panelGrid>
+                <h:panelGroup styleClass="block w210px font-size-12pt" style="color: #D32F2F">
+
+                    <p:outputLabel value="#{msg['menu.show.students.all']}">
+                        <h:selectBooleanCheckbox id="includeArchived" value="#{studentModeBean.includeArchived}">
+                            <p:ajax event="change" update=":studentModeForm:students"/>
+                        </h:selectBooleanCheckbox>
+                    </p:outputLabel>
+                </h:panelGroup>
                 <h:panelGroup styleClass="block margin-bottom-40px" rendered="#{studentModeBean.stream ne null}">
                     <p:outputLabel value="#{studentModeBean.stream.name}"/>
                     <p:outputLabel value="#{studentModeBean.stream.discipline.name}"/>

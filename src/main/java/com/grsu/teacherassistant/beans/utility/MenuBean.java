@@ -1,8 +1,11 @@
 package com.grsu.teacherassistant.beans.utility;
 
+import com.grsu.teacherassistant.beans.StudentsBean;
 import com.grsu.teacherassistant.entities.Group;
 import com.grsu.teacherassistant.utils.FacesUtils;
 import com.grsu.teacherassistant.utils.LocaleUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -17,7 +20,10 @@ public class MenuBean implements Serializable {
 
 	@ManagedProperty(value = "#{sessionBean}")
 	private SessionBean sessionBean;
-
+    @ManagedProperty(value = "#{studentsBean}")
+    @Getter
+    @Setter
+	private StudentsBean studentsBean;
 	private boolean showMenu = true;
 
 /*
@@ -78,7 +84,12 @@ public class MenuBean implements Serializable {
 	}
 
 	public void changeView(String viewName) {
-		sessionBean.setActiveView(viewName);
+        studentsBean.setIncludeArchived(false);
+        sessionBean.setActiveView(viewName);
+	}
+	public void openAllStudentsPage() {
+        studentsBean.setIncludeArchived(true);
+		sessionBean.setActiveView("students");
 	}
 
 	public void loadStudentsPhoto() {

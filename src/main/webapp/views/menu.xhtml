@@ -119,6 +119,8 @@
                             actionListener="#{menuBean.changeView('groups')}" update="@([id$=views])"/>
                 <p:menuitem value="#{msg['menu.show.students']}" icon="fa fa-fw fa-user"
                             actionListener="#{menuBean.changeView('students')}" update="@([id$=views])"/>
+                <p:menuitem value="#{msg['menu.show.students.all']}" icon="fa fa-fw fa-user"
+                            actionListener="#{menuBean.openAllStudentsPage()}" update="@([id$=views])"/>
             </p:submenu>
 
             <p:submenu label="#{msg['menu.modes']}" icon="fa fa-fw fa-list-alt" rendered="#{sessionBean.connected}">

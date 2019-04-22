@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
 	private static final String FORMAT_DATE = "dd.MM.yyyy";
+	private static final String EN_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
 	public static final String FORMAT_DATE_SHORT_YEAR = "dd.MM.yy";
 	private static final String FORMAT_TIME = "HH:mm";
 	private static final String FORMAT_TIME_SECOND = "HH:mm:ss";
@@ -15,6 +16,7 @@ public class DateUtils {
 	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(FORMAT_DATE);
 	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMAT_TIME);
 	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMAT_DATE_TIME);
+	public static final DateTimeFormatter DATE_TIME_FORMATTER_EN = DateTimeFormatter.ofPattern(EN_DATETIME_FORMAT);
 
 	private static String formatDate(LocalDateTime date, DateTimeFormatter formatter) {
 		return date.format(formatter);

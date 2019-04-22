@@ -21,7 +21,8 @@ public class StudentsBean implements Serializable {
     private List<Student> students;
     private List<Student> filteredStudents;
     private Student selectedStudent;
-
+    private boolean includeArchived = false;
+    private boolean lastQuery = false;
     private boolean showClosed;
 
     public void removeStudent(Student student) {
@@ -30,8 +31,9 @@ public class StudentsBean implements Serializable {
     }
 
     public List<Student> getStudents() {
-        if (students == null) {
-            students = StudentDAO.getAll();
+        if (students == null || lastQuery != includeArchived) {
+            students = StudentDAO.getAll(includeArchived);
+            lastQuery = includeArchived;
         }
         return students;
     }
