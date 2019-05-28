@@ -8,6 +8,7 @@ import com.grsu.teacherassistant.dao.LessonDAO;
 import com.grsu.teacherassistant.dao.StreamDAO;
 import com.grsu.teacherassistant.entities.Lesson;
 import com.grsu.teacherassistant.entities.Note;
+import com.grsu.teacherassistant.entities.Stream;
 import com.grsu.teacherassistant.models.LessonType;
 import com.grsu.teacherassistant.utils.FacesUtils;
 import com.grsu.teacherassistant.utils.LessonUtils;
@@ -71,7 +72,20 @@ public class LessonsBean implements Serializable {
 
     public List<Lesson> getLessons() {
         if (lessons == null) {
-            lessons = LessonDAO.getAll(dateFrom, dateTo, closed, streamId, past, disciplineId, scheduleId, groupId, type);
+            // workaround for loading all lessons of group
+            if (groupId != null) {
+                List<Stream> streams = StreamDAO.getAll();
+                List<Stream> streamsOfGroup = streams.stream().filter(stream -> stream.getGroups().stream().anyMatch(group -> group.getId().equals(groupId))).collect(Collectors.toList());
+                lessons = new ArrayList<>();
+                for (Stream stream : streamsOfGroup) {
+                    List<Lesson> streamLessons = LessonDAO.getAll(dateFrom, dateTo, closed, stream.getId(), past, disciplineId, scheduleId, null, type);
+                    if (streamLessons != null) {
+                        lessons.addAll(streamLessons);
+                    }
+                }
+            } else {
+                lessons = LessonDAO.getAll(dateFrom, dateTo, closed, streamId, past, disciplineId, scheduleId, groupId, type);
+            }
             if (lessons != null) {
                 lessons = lessons.stream().sorted((l1, l2) -> {
                     if (l1.getDate() == null && l2.getDate() == null) {
@@ -168,7 +182,7 @@ public class LessonsBean implements Serializable {
     }
 
     public Lesson getLastLecture(Lesson currentLesson) {
-        if (currentLesson == null ) {
+        if (currentLesson == null) {
             return null;
         }
         if (currentLesson.getLastLectureLesson() == null) {
@@ -178,7 +192,7 @@ public class LessonsBean implements Serializable {
     }
 
     public Lesson getLastPractice(Lesson currentLesson) {
-        if (currentLesson == null ) {
+        if (currentLesson == null) {
             return null;
         }
         if (currentLesson.getLastPracticeLesson() == null) {
