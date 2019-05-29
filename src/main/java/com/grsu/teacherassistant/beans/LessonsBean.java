@@ -83,6 +83,7 @@ public class LessonsBean implements Serializable {
                         lessons.addAll(streamLessons);
                     }
                 }
+                lessons = lessons.stream().filter(lesson -> lesson.getGroup() == null || lesson.getGroup().getId().equals(groupId)).collect(Collectors.toList());
             } else {
                 lessons = LessonDAO.getAll(dateFrom, dateTo, closed, streamId, past, disciplineId, scheduleId, groupId, type);
             }
