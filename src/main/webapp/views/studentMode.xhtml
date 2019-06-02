@@ -62,6 +62,7 @@
                         <p:overlayPanel for="nextSettingsBtn" hideEffect="fade" style="position: fixed;"
                                         styleClass="left">
                             <p:selectOneRadio value="#{studentModeBean.studentsType}" layout="grid" columns="1">
+                                <f:selectItem itemValue="ARCHIVED" itemLabel="#{msg['studentsMode.next.archive']}"/>
                                 <f:selectItem itemValue="ALL" itemLabel="#{msg['studentsMode.next.all']}"/>
                                 <f:selectItem itemValue="STREAM" itemLabel="#{msg['studentsMode.next.stream']}"/>
                                 <f:selectItem itemValue="GROUP" itemLabel="#{msg['studentsMode.next.group']}"/>
@@ -169,14 +170,6 @@
                     </h:panelGroup>
 
                 </h:panelGrid>
-                <h:panelGroup styleClass="block w210px font-size-12pt" style="color: #D32F2F">
-
-                    <p:outputLabel value="#{msg['menu.show.students.all']}">
-                        <h:selectBooleanCheckbox id="includeArchived" value="#{studentModeBean.includeArchived}">
-                            <p:ajax event="change" update=":studentModeForm:students"/>
-                        </h:selectBooleanCheckbox>
-                    </p:outputLabel>
-                </h:panelGroup>
                 <h:panelGroup styleClass="block margin-bottom-40px" rendered="#{studentModeBean.stream ne null}">
                     <p:outputLabel value="#{studentModeBean.stream.name}"/>
                     <p:outputLabel value="#{studentModeBean.stream.discipline.name}"/>

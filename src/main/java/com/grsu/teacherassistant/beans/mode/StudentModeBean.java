@@ -52,8 +52,6 @@ public class StudentModeBean implements Serializable, SerialListenerBean {
     private Stream stream;
     private LessonStudentModel lessonStudent;
     private Student student;
-    private boolean includeArchived = false;
-    private boolean lastQuery = false;
     private StudentLesson selectedStudentLesson;
     private String newNote;
     private StudentLesson editedStudentLesson;
@@ -304,11 +302,13 @@ public class StudentModeBean implements Serializable, SerialListenerBean {
     }
 
     public List<Student> getStudents() {
-        if (students == null || lastQuery != includeArchived) {
-            lastQuery = includeArchived;
+        if (students == null) {
             switch (studentsType) {
+                case "ARCHIVED":
+                    students = sessionBean.getStudents(true);
+                    break;
                 case "ALL":
-                    students = sessionBean.getStudents(includeArchived);
+                    students = sessionBean.getStudents(false);
                     break;
                 case "STREAM":
                     students = stream.getGroups().parallelStream().flatMap(g -> g.getStudents().parallelStream()).distinct().collect(Collectors.toList());
