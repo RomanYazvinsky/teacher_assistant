@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,7 +40,7 @@ public class Group implements AssistantEntity {
         inverseJoinColumns = @JoinColumn(name = "stream_id", referencedColumnName = "id"))
     private List<Stream> streams;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "STUDENT_GROUP",
         joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
@@ -56,7 +54,7 @@ public class Group implements AssistantEntity {
     @JoinColumn(name = "type_id", referencedColumnName = "id")
     private GroupType type;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<Lesson> lessons;
 
     @ManyToOne

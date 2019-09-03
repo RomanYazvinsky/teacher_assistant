@@ -55,7 +55,7 @@ public class StudentLesson implements AssistantEntity {
     @Column(name = "lesson_id", insertable = false, updatable = false)
     private Integer lessonId;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "entity_id", referencedColumnName = "id")
     @Where(clause = "type = 'STUDENT_LESSON'")
     private List<Note> notes;

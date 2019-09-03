@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,13 +49,13 @@ public class Stream implements AssistantEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "STREAM_GROUP",
         joinColumns = @JoinColumn(name = "stream_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))
     private List<Group> groups;
 
-    @OneToMany(mappedBy = "stream")
+    @OneToMany(mappedBy = "stream", cascade = CascadeType.ALL)
     private List<Lesson> lessons;
 
     @ManyToOne

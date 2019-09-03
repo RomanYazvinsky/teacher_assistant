@@ -23,7 +23,7 @@ public class GroupType implements AssistantEntity {
 	@Column(name = "name")
 	private String name;
 
-	@OneToMany(mappedBy = "type")
+	@OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
 	private List<Group> groups;
 
 	@Override

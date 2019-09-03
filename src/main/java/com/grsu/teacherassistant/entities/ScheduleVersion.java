@@ -31,7 +31,7 @@ public class ScheduleVersion implements AssistantEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "version")
+    @OneToMany(mappedBy = "version", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
 
     @Override

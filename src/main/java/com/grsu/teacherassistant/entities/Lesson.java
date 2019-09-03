@@ -5,8 +5,6 @@ import com.grsu.teacherassistant.converters.db.LocalDateTimeAttributeConverter;
 import com.grsu.teacherassistant.models.LessonType;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Where;
 
 import javax.faces.bean.ManagedBean;
@@ -65,8 +63,7 @@ public class Lesson implements AssistantEntity {
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 
-    @Cascade(CascadeType.DELETE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "entity_id", referencedColumnName = "id")
     @Where(clause = "type = 'LESSON'")
     private List<Note> notes;
@@ -76,8 +73,7 @@ public class Lesson implements AssistantEntity {
     private Schedule schedule;
 
     @MapKey(name = "studentId")
-    @OneToMany(mappedBy = "lesson")
-    @Cascade(CascadeType.DELETE)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     private Map<Integer, StudentLesson> studentLessons;
 
     @Transient

@@ -44,7 +44,7 @@ public class Discipline implements AssistantEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @OneToMany(mappedBy = "discipline")
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL)
     private List<Stream> streams;
 
     public Discipline() {

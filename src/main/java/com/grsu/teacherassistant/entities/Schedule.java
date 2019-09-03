@@ -34,7 +34,7 @@ public class Schedule implements AssistantEntity {
     @Column(name = "number")
     private Integer number;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Lesson> lessons;
 
     @ManyToOne

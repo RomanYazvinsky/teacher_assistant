@@ -3,14 +3,10 @@ package com.grsu.teacherassistant.entities;
 import com.grsu.teacherassistant.models.SkipInfo;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Where;
 
 import javax.faces.bean.ManagedBean;
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -122,19 +118,16 @@ public class Student implements AssistantEntity, Person {
         inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))
     private List<Group> groups;
 
-    @Cascade(CascadeType.DELETE)
     @MapKey(name = "lessonId")
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Map<Integer, StudentLesson> studentLessons;
 
-    @Cascade(CascadeType.DELETE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "entity_id", referencedColumnName = "id")
     @Where(clause = "type = 'STUDENT'")
     private List<Note> notes;
 
-    @Cascade(CascadeType.DELETE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private List<StudentNotification> notifications;
 
