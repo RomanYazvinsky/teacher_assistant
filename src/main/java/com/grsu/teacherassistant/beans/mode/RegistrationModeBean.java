@@ -632,6 +632,71 @@ public class RegistrationModeBean implements Serializable, SerialListenerBean {
         return localeUtils.getMessage("lesson.visit.noSkip");
     }
 
+    public String getAdditionLessonInfo(Student student) {
+        Group group = selectedLesson.getGroup();
+        Map<Integer, StudentLesson> allStudentLessonsMap = student.getStudentLessons();
+        if (allStudentLessonsMap == null) {
+            return "";
+        }
+        Discipline currentDiscipline = selectedLesson.getStream().getDiscipline();
+        if (currentDiscipline == null) {
+            return "";
+        }
+        List<StudentLesson> allStudentLessons = new ArrayList<>(allStudentLessonsMap.values());
+        java.util.stream.Stream<Lesson> lessonStream;
+        if (group == null) {
+            Stream stream = selectedLesson.getStream();
+            if (stream == null) {
+                return "";
+            }
+            List<Lesson> lessons = stream.getLessons();
+            if (lessons == null) {
+                return "";
+            }
+            lessonStream = lessons.stream();
+        } else {
+            List<Lesson> lessons = group.getLessons();
+            if (lessons == null) {
+                return "";
+            }
+            lessonStream = lessons.stream();
+        }
+        List<StudentLesson> studentLessons = lessonStream
+            .flatMap(lesson -> {
+                    Map<Integer, StudentLesson> stLess = lesson.getStudentLessons();
+                    if (stLess == null) {
+                        return java.util.stream.Stream.empty();
+                    }
+                    return stLess
+                        .values()
+                        .stream()
+                        .filter(studentLesson -> {
+                            Lesson ls = studentLesson.getLesson();
+                            if (ls == null) {
+                                return false;
+                            }
+                            Stream stream = ls.getStream();
+                            if (stream == null) {
+                                return false;
+                            }
+                            Discipline discipline = stream.getDiscipline();
+                            if (discipline == null) {
+                                return false;
+                            }
+                            return studentLesson.getStudentId().equals(student.getId())
+                                && discipline.getId().equals(currentDiscipline.getId());
+                        });
+                }
+            )
+            .collect(Collectors.toList());
+        long additionalLessonsCount = allStudentLessons.stream()
+            .filter(sl -> studentLessons.stream()
+                .noneMatch(studentLesson -> studentLesson.getId().equals(sl.getId()))
+            ).count();
+        String additionalLessonCountInfo = additionalLessonsCount == 0 ? "" : String.format(" +%d", additionalLessonsCount);
+        return additionalLessonCountInfo;
+    }
+
     public void onStudentRowSelect(SelectEvent event) {
         selectStudent(((LessonStudentModel) event.getObject()).getStudent());
     }
